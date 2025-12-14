@@ -10,4 +10,8 @@
       <PackageReference Include="HotChocolate" Version="15.1.11" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Interfaces\" />
+    </ItemGroup>
+
 </Project>

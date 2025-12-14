@@ -9,12 +9,14 @@
 
     <ItemGroup>
         <PackageReference Include="HotChocolate" Version="15.1.11" />
+        <PackageReference Include="HotChocolate.AspNetCore" Version="15.1.11" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.20"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\BShop.Application\BShop.Application.csproj" />
+      <ProjectReference Include="..\BShop.Infrastructure\BShop.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>
