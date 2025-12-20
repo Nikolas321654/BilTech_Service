@@ -1,0 +1,22 @@
+﻿services:
+  shop-api:
+    build:
+      context: .
+      dockerfile: BShop.Api/Dockerfile
+    ports:
+      - "8000:8080"
+    container_name: shop-api
+    depends_on:
+      - shop-db
+  shop-db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+    volumes:
+      - db-data:/var/lib/postgresql/data
+volumes:
+  db-data:
+  
