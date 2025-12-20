@@ -10,5 +10,5 @@ public class Product
     public DateTime UpdatedAt { get; set; }
     public bool IsDeleted { get; set; }
 
-    public virtual ProductType ProductType { get; set; }
+    public virtual ICollection<ProductType> ProductTypes { get; set; }
 }

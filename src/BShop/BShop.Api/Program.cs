@@ -18,14 +18,11 @@ builder.Services.AddGraphQLServer()
     .AddSorting();
 
 var app = builder.Build();
-
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
+app.MapGraphQL();
 app.Run();
