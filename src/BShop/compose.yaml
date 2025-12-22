@@ -1,22 +1,30 @@
-﻿services:
+﻿version: '3.8'
+
+services:
+  shop-db:
+    image: postgres:17-alpine
+    container_name: bshop-shop-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: ShopDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - bshop_db-data:/var/lib/postgresql/data
+
   shop-api:
+    image: bshop-shop-api
+    container_name: bshop-api
     build:
       context: .
       dockerfile: BShop.Api/Dockerfile
-    ports:
-      - "8000:8080"
-    container_name: shop-api
+    environment:
+      - ConnectionStrings__ShopDbContext=Host=shop-db;Port=5432;Database=ShopDb;Username=postgres;Password=123456
     depends_on:
       - shop-db
-  shop-db:
-    image: postgres
     ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
-    volumes:
-      - db-data:/var/lib/postgresql/data
+      - "8080:8080"
+
 volumes:
-  db-data:
-  
+  bshop_db-data:

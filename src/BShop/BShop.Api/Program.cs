@@ -1,53 +1,39 @@
-using BShop.Domain.Model;
-using BShop.GraphQL.Queries;
-using BShop.Infrastructure;
-using Microsoft.EntityFrameworkCore;
+    using BShop;
+    using BShop.GraphQL.Queries;
+    using BShop.Infrastructure;
+    using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(args);
-var configuration = builder.Configuration;
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+    var builder = WebApplication.CreateBuilder(args);
+    var configuration = builder.Configuration;
 
-builder.Services.AddGraphQLServer()
-    .AddQueryType(d => d.Name("Query"))
-    .AddTypeExtension<ProductQuery>()
-    .AddTypeExtension<ShopQuery>()
-    .AddTypeExtension<ShopSalesQuery>()
-    .AddTypeExtension<WarehouseTransferQuery>()
-    .AddTypeExtension<ShopStorageQuery>()
-    .AddMutationType()
-    .AddProjections()
-    .AddFiltering()
-    .AddSorting();
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+    builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-builder.Services.AddDbContext<ShopDbContext>(options =>
-{
-    options.UseNpgsql(configuration.GetConnectionString(nameof(ShopDbContext)));
-});
+    builder.Services.AddGraphQLServer()
+        .AddQueryType(d => d.Name("Query"))
+        .AddTypeExtension<ProductQuery>()
+        .AddTypeExtension<ShopQuery>()
+        .AddTypeExtension<ShopSalesQuery>()
+        .AddTypeExtension<WarehouseTransferQuery>()
+        .AddTypeExtension<ShopStorageQuery>()
+        // .AddMutationType(d => d.Name("Mutation"))
+        .AddProjections()
+        .AddFiltering()
+        .AddSorting();
 
-var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<ShopDbContext>();
-    try
+    builder.Services.AddDbContext<ShopDbContext>(options =>
     {
-        Console.WriteLine("Applying migrations...");
-        dbContext.Database.Migrate();
-        Console.WriteLine("Migrations applied successfully!");
-    }
-    catch (Exception ex)
+        options.UseNpgsql(configuration.GetConnectionString(nameof(ShopDbContext)));
+    });
+
+    var app = builder.Build();
+
+    if (app.Environment.IsDevelopment())
     {
-        Console.WriteLine($"Error applying migrations");
-        throw;
+        app.UseSwagger();
+        app.UseSwaggerUI();
     }
-}
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.MapGraphQL();
-app.Run();
+    app.MapGraphQL();
+    app.Run();
