@@ -4,9 +4,9 @@ namespace BShop.Domain.Interfaces.Repository;
 
 public interface IWarehouseTransferRepository
 {
-    public Task<IQueryable<WarehouseTransferRequest>> GetAllWarehouseOrders();
-    public Task<WarehouseTransferRequest> GetWarehouseOrderById(Guid id);
-    public Task<WarehouseTransferRequest> CreateWarehouseOrder(WarehouseTransferRequest warehouseTransferRequest);
+    public IQueryable<WarehouseTransferRequest> GetAllWarehouseOrders(Guid shopId);
+    public Task<WarehouseTransferRequest?> GetWarehouseOrderById(Guid shopId, Guid orderId);
+    public Task CreateWarehouseOrder(WarehouseTransferRequest warehouseTransferRequest);
     public Task UpdateWarehouseOrder(WarehouseTransferRequest warehouseTransferRequest);
-    public Task DeleteWarehouseOrder(Guid id);
+    public Task DeleteWarehouseOrder(Guid shopId, Guid orderId);
 }
