@@ -39,4 +39,20 @@ public class ShopChecksRepository(ShopDbContext context) : IShopChecksRepository
 
         await context.SaveChangesAsync();
     }
+
+    public async Task SoftDeleteShopCheck(Guid shopId, Guid checkId)
+    {
+        var check = await GetShopCheckById(checkId, shopId);
+        if (check != null)
+        {
+            check.IsDeleted = true;
+            await UpdateShopCheck(check);
+        }
+    }
+
+    public async Task AddProductsToCheck(SoldProduct soldProduct)
+    {
+        await context.SoldProducts.AddAsync(soldProduct);
+        await context.SaveChangesAsync();
+    }
 }
