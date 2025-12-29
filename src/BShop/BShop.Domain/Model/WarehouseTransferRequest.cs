@@ -6,7 +6,7 @@ public class WarehouseTransferRequest
     public Guid WarehouseId { get; set; }
     public Guid ShopId { get; set; }
     public string Status { get; set; }
-    public DateTime DeliveredAt { get; set; }
+    public DateTime? DeliveredAt { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public bool IsDeleted { get; set; }

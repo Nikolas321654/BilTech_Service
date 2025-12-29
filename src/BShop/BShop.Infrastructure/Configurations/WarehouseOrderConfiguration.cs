@@ -13,11 +13,16 @@ public class WarehouseOrderConfiguration : IEntityTypeConfiguration<WarehouseOrd
         builder
             .HasOne(x => x.WarehouseTransferRequest)
             .WithMany(x => x.WarehouseOrders)
-            .HasForeignKey(x => x.OrderId);
+            .HasForeignKey(x => x.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder
             .HasOne(x => x.Product)
             .WithMany()
             .HasForeignKey(x => x.ProductId);
+
+
+        builder.HasIndex(x => x.OrderId);
+        builder.HasIndex(x => x.ProductId);
     }
 }

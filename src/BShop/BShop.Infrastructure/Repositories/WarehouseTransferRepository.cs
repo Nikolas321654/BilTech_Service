@@ -9,7 +9,7 @@ public class WarehouseTransferRepository(ShopDbContext context) : IWarehouseTran
     public IQueryable<WarehouseTransferRequest> GetAllWarehouseOrders(Guid shopId)
     {
         return context.WarehouseTransferRequests
-            .Where(x => x.ShopId == shopId)
+            .Where(x => x.ShopId == shopId && x.IsDeleted == false)
             .AsNoTracking();
     }
 
@@ -21,26 +21,38 @@ public class WarehouseTransferRepository(ShopDbContext context) : IWarehouseTran
 
     public async Task CreateWarehouseOrder(WarehouseTransferRequest warehouseTransferRequest)
     {
-        context.WarehouseTransferRequests.Add(warehouseTransferRequest);
-        await context.SaveChangesAsync();
+        await context.WarehouseTransferRequests.AddAsync(warehouseTransferRequest);
     }
 
-    public async Task UpdateWarehouseOrder(WarehouseTransferRequest warehouseTransferRequest)
+    public void UpdateWarehouseOrder(WarehouseTransferRequest warehouseTransferRequest)
     {
         context.WarehouseTransferRequests.Update(warehouseTransferRequest);
-        await context.SaveChangesAsync();
     }
 
     public async Task DeleteWarehouseOrder(Guid shopId, Guid orderId)
     {
         var order = await GetWarehouseOrderById(shopId, orderId);
         if (order != null) context.Remove(order);
-        await context.SaveChangesAsync();
     }
 
-    public async Task EddProductToWarehouse(WarehouseOrder order)
+    public async Task AddProductToOrder(WarehouseOrder order)
     {
         await context.WarehouseOrders.AddAsync(order);
-        await context.SaveChangesAsync();
+    }
+
+    public async Task<WarehouseOrder?> GetWarehouseOrderProduct(Guid orderId, Guid productId)
+    {
+        var order = await context.WarehouseOrders.FirstOrDefaultAsync(x =>
+            x.OrderId == orderId && x.ProductId == productId);
+
+        return order;
+    }
+
+    public async Task UpdateWarehouseOrderProduct(Guid productId, Guid orderId, int quantity)
+    {
+        await context.WarehouseOrders
+            .Where(x => x.OrderId == orderId && x.ProductId == productId)
+            .ExecuteUpdateAsync(x =>
+                x.SetProperty(o => o.ProductCount, o => o.ProductCount + quantity));
     }
 }

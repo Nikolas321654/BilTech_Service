@@ -15,5 +15,7 @@ public class WarehouseTransferRequestConfiguration : IEntityTypeConfiguration<Wa
             .WithMany(x => x.WarehouseTransferRequests)
             .HasForeignKey(x => x.ShopId);
 
+        builder.HasIndex(x => x.ShopId);
+        builder.HasIndex(x => x.Status);
     }
 }
