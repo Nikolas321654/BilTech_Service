@@ -4,9 +4,9 @@ namespace BShop.Domain.Interfaces.Repository;
 
 public interface IProductTypeRepository
 {
-    public IQueryable<ProductType> GetAllProductTypes();
-    public Task<ProductType?> GetProductTypeById(Guid id);
-    public Task CreateProductType(ProductType productType);
-    public Task UpdateProductType(ProductType productType);
-    public Task DeleteProductType(Guid id);
+    public IQueryable<ProductType> GetAllProductTypes(CancellationToken cancellationToken);
+    public Task<ProductType?> GetProductTypeById(Guid id, CancellationToken cancellationToken);
+    public Task CreateProductType(ProductType productType, CancellationToken cancellationToken);
+    public Task UpdateProductType(ProductType productType, CancellationToken cancellationToken);
+    public Task DeleteProductType(Guid id, CancellationToken cancellationToken);
 }

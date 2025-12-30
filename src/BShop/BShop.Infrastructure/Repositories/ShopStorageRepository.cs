@@ -6,34 +6,30 @@ namespace BShop.Infrastructure.Repositories;
 
 public class ShopStorageRepository(ShopDbContext context) : IShopStorageRepository
 {
-    public async Task<ShopStorage?> GetProductFromShop(Guid shopId, Guid productId)
+    public async Task<ShopStorage?> GetProductFromShop(Guid shopId, Guid productId, CancellationToken cancellationToken)
     {
         return await context.ShopStorageInventories
             .FirstOrDefaultAsync(x =>
-                x.ShopId == shopId && x.ProductId == productId);
+                x.ShopId == shopId && x.ProductId == productId, cancellationToken);
     }
 
-    public async Task AddProductToShop(ShopStorage shopStorage)
+    public void AddProductToShop(ShopStorage shopStorage, CancellationToken cancellationToken)
     {
-        context.Add(shopStorage);
-        await context.SaveChangesAsync();
+        context.ShopStorageInventories.Add(shopStorage);
     }
 
-    public async Task UpdateProductInShopStorage(ShopStorage shopStorage)
+    public void UpdateProductInShopStorage(ShopStorage shopStorage, CancellationToken cancellationToken)
     {
         context.ShopStorageInventories.Update(shopStorage);
-        await context.SaveChangesAsync();
     }
 
-    public async Task DeleteProductFromStorage(Guid shopId, Guid productId)
+    public async Task DeleteProductFromStorage(Guid shopId, Guid productId, CancellationToken cancellationToken)
     {
-        var product = await GetProductFromShop(shopId, productId);
+        var product = await GetProductFromShop(shopId, productId, cancellationToken);
         if (product != null) context.Remove(product);
-
-        await context.SaveChangesAsync();
     }
 
-    public IQueryable<ShopStorage> GetShopAllProducts(Guid shopId)
+    public IQueryable<ShopStorage> GetShopAllProducts(Guid shopId, CancellationToken cancellationToken)
     {
         return context.ShopStorageInventories
             .Where(x => x.ShopId == shopId)

@@ -6,53 +6,47 @@ namespace BShop.Infrastructure.Repositories;
 
 public class ShopChecksRepository(ShopDbContext context) : IShopChecksRepository
 {
-    public IQueryable<ShopCheck> GetAllShopChecks(Guid shopId)
+    public IQueryable<ShopCheck> GetAllShopChecks(Guid shopId, CancellationToken cancellationToken)
     {
         return context.ShopSales
-            .Where(x => x.ShopId == shopId)
+            .Where(x => x.ShopId == shopId && x.IsDeleted == false)
             .AsNoTracking();
     }
 
-    public async Task<ShopCheck?> GetShopCheckById(Guid checkId, Guid shopId)
+    public async Task<ShopCheck?> GetShopCheckById(Guid checkId, Guid shopId, CancellationToken cancellationToken)
     {
         return await context.ShopSales
-            .FirstOrDefaultAsync(x => x.Id == checkId && x.ShopId == shopId);
+            .FirstOrDefaultAsync(x => x.Id == checkId && x.ShopId == shopId, cancellationToken);
     }
 
-    public async Task CreateShopCheck(ShopCheck shopCheck)
+    public void CreateShopCheck(ShopCheck shopCheck, CancellationToken cancellationToken)
     {
         context.ShopSales.Add(shopCheck);
-        await context.SaveChangesAsync();
     }
 
-    public async Task UpdateShopCheck(ShopCheck shopCheck)
+    public void UpdateShopCheck(ShopCheck shopCheck, CancellationToken cancellationToken)
     {
         context.ShopSales.Update(shopCheck);
-        await context.SaveChangesAsync();
     }
 
-    public async Task DeleteShopCheck(Guid checkId, Guid shopId)
+    public async Task DeleteShopCheck(Guid checkId, Guid shopId, CancellationToken cancellationToken)
     {
-        var chack = await GetShopCheckById(checkId, shopId);
-        if (chack != null)
-            context.Remove(chack);
-
-        await context.SaveChangesAsync();
+        var check = await GetShopCheckById(checkId, shopId, cancellationToken);
+        if (check != null) context.Remove(check);
     }
 
-    public async Task SoftDeleteShopCheck(Guid shopId, Guid checkId)
+    public async Task SoftDeleteShopCheck(Guid shopId, Guid checkId, CancellationToken cancellationToken)
     {
-        var check = await GetShopCheckById(checkId, shopId);
+        var check = await GetShopCheckById(checkId, shopId, cancellationToken);
         if (check != null)
         {
             check.IsDeleted = true;
-            await UpdateShopCheck(check);
+            UpdateShopCheck(check, cancellationToken);
         }
     }
 
-    public async Task AddProductsToCheck(SoldProduct soldProduct)
+    public async Task AddProductsToCheck(SoldProduct soldProduct, CancellationToken cancellationToken)
     {
-        await context.SoldProducts.AddAsync(soldProduct);
-        await context.SaveChangesAsync();
+        await context.SoldProducts.AddAsync(soldProduct, cancellationToken);
     }
 }

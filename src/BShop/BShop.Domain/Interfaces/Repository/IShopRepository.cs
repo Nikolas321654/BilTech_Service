@@ -4,9 +4,9 @@ namespace BShop.Domain.Interfaces.Repository;
 
 public interface IShopRepository
 {
-    public Task<Shop> GetShopById(Guid id);
-    public Task<Shop> CreateShop(Shop shop);
-    public Task UpdateShop(Shop shop);
-    public Task DeleteShop(Guid id);
-    public Task<IQueryable<Shop>> GetAllShops();
+    public IQueryable<Shop> GetAllShops(CancellationToken cancellationToken);
+    public Task<Shop?> GetShopById(Guid id, CancellationToken cancellationToken);
+    public Task CreateShop(Shop shop, CancellationToken cancellationToken);
+    public Task UpdateShop(Shop shop, CancellationToken cancellationToken);
+    public Task DeleteShop(Guid id, CancellationToken cancellationToken);
 }

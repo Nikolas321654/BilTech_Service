@@ -1,4 +1,4 @@
-using BShop.Domain.CustomExepions;
+using BShop.Domain.CustomExceptions;
 using BShop.Domain.Interfaces.Repository;
 using BShop.Domain.Interfaces.Service;
 using BShop.Domain.Model;
@@ -7,55 +7,66 @@ namespace BShop.Application.Services;
 
 public class ProductService(IProductRepository productRepository) : IProductService
 {
-    private async Task<Product> ExistsProduct(Guid id)
+    public async Task<Product?> GetProductById(Guid id, CancellationToken cancellationToken)
     {
-        var product = await productRepository.GetProductById(id);
+        if (id == Guid.Empty) throw new BadRequestException("Product id cannot be empty");
+
+        var product = await productRepository.GetProductById(id, cancellationToken);
         return product ?? throw new NotFoundException($"Product with {id} id, not found");
     }
 
-    public async Task<Product?> GetProductById(Guid id)
+    public IQueryable<Product> GetAllProducts(CancellationToken cancellationToken)
     {
-        var product = await ExistsProduct(id);
-        return product;
+        return productRepository.GetAllProducts(cancellationToken);
     }
 
-    public IQueryable<Product> GetAllProducts()
+    public async Task CreateProduct(string name, decimal price, Guid productType, CancellationToken cancellationToken)
     {
-        return productRepository.GetAllProducts();
+        if (price <= 0) throw new BadRequestException("Price must be greater than 0");
+        if (name.Length < 2) throw new BadRequestException("Product name must be at least 2 characters");
+        if (productType == Guid.Empty) throw new BadRequestException("Product type id cannot be empty");
+
+        var product = new Product()
+        {
+            Id = Guid.NewGuid(),
+            Name = name,
+            Price = price,
+            TypeId = productType,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+            IsDeleted = false
+        };
+
+        await productRepository.CreateProduct(product, cancellationToken);
     }
 
-    public async Task<Product> CreateProduct(Product product)
+    public async Task UpdateProduct(decimal price, Guid productId, CancellationToken cancellationToken)
     {
-        if (product.Price <= 0) throw new BadRequestException("Price must be greater than 0");
-        if (product.ProductTypes.Count == 0) throw new BadRequestException("Product must have at least one type");
-        if (product.Name.Length < 2) throw new BadRequestException("Product name must be at least 2 characters");
-
-        product.Id = Guid.NewGuid();
-        product.CreatedAt = DateTime.UtcNow;
-        return await productRepository.CreateProduct(product);
-    }
-
-    public async Task UpdateProduct(decimal price, Guid id)
-    {
-        var newProduct = await ExistsProduct(id);
+        if (productId == Guid.Empty) throw new BadRequestException("Product id cannot be empty");
         if (price <= 0) throw new BadRequestException("Price must be greater than 0");
 
-        newProduct.Price = price;
+        var newProduct = await GetProductById(productId, cancellationToken);
+
+        newProduct!.Price = price;
         newProduct.UpdatedAt = DateTime.UtcNow;
-        await productRepository.UpdateProduct(newProduct);
+        await productRepository.UpdateProduct(newProduct, cancellationToken);
     }
 
-    public async Task DeleteProduct(Guid id)
+    public async Task DeleteProduct(Guid productId, CancellationToken cancellationToken)
     {
-        await ExistsProduct(id);
-        await productRepository.DeleteProduct(id);
+        if (productId == Guid.Empty) throw new BadRequestException("Product id cannot be empty");
+
+        await GetProductById(productId, cancellationToken);
+        await productRepository.DeleteProduct(productId, cancellationToken);
     }
 
-    public async Task SoftDeleteProduct(Guid id)
+    public async Task SoftDeleteProduct(Guid id, CancellationToken cancellationToken)
     {
-        var newProduct = await ExistsProduct(id);
+        if (id == Guid.Empty) throw new BadRequestException("Product id cannot be empty");
 
-        newProduct.IsDeleted = true;
-        await productRepository.UpdateProduct(newProduct);
+        var newProduct = await GetProductById(id, cancellationToken);
+
+        newProduct!.IsDeleted = true;
+        await productRepository.UpdateProduct(newProduct, cancellationToken);
     }
 }

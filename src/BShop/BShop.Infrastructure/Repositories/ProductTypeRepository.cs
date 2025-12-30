@@ -6,33 +6,33 @@ namespace BShop.Infrastructure.Repositories;
 
 public class ProductTypeRepository(ShopDbContext context) : IProductTypeRepository
 {
-    public IQueryable<ProductType> GetAllProductTypes()
+    public IQueryable<ProductType> GetAllProductTypes(CancellationToken cancellationToken)
     {
         return context.ProductTypes.AsNoTracking();
     }
 
-    public Task<ProductType?> GetProductTypeById(Guid id)
+    public Task<ProductType?> GetProductTypeById(Guid id, CancellationToken cancellationToken)
     {
-        return context.ProductTypes.FirstOrDefaultAsync(x => x.Id == id);
+        return context.ProductTypes.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
-    public async Task CreateProductType(ProductType productType)
+    public async Task CreateProductType(ProductType productType, CancellationToken cancellationToken)
     {
         context.Add(productType);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task UpdateProductType(ProductType productType)
+    public async Task UpdateProductType(ProductType productType, CancellationToken cancellationToken)
     {
         context.Update(productType);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteProductType(Guid id)
+    public async Task DeleteProductType(Guid id, CancellationToken cancellationToken)
     {
-        var type = await GetProductTypeById(id);
+        var type = await GetProductTypeById(id, cancellationToken);
         if (type != null) context.Remove(type);
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
     }
 }

@@ -13,16 +13,16 @@ public class ProductQuery(IProductService _productService, IMapper _mapper)
     [UseProjection]
     [UseFiltering]
     [UseSorting]
-    public IQueryable<ProductApi> GetAllProducts()
+    public IQueryable<ProductApi> GetAllProducts(CancellationToken cancellationToken)
     {
-        return _productService.GetAllProducts().ProjectTo<ProductApi>(_mapper.ConfigurationProvider);
+        return _productService.GetAllProducts(cancellationToken).ProjectTo<ProductApi>(_mapper.ConfigurationProvider);
     }
 
     [UseFirstOrDefault]
     [UseProjection]
-    public IQueryable<ProductApi> GetProductById(Guid id)
+    public IQueryable<ProductApi> GetProductById(Guid id, CancellationToken cancellationToken)
     {
-        return GetAllProducts()
+        return GetAllProducts(cancellationToken)
             .Where(x => x.Id == id)
             .ProjectTo<ProductApi>(_mapper.ConfigurationProvider);
     }

@@ -4,9 +4,11 @@ namespace BShop.Domain.Interfaces.Repository;
 
 public interface IShopChecksRepository
 {
-    public IQueryable<ShopCheck> GetAllShopChecks(Guid shopId);
-    public Task<ShopCheck?> GetShopCheckById(Guid checkId, Guid shopId);
-    public Task CreateShopCheck(ShopCheck shopCheck);
-    public Task UpdateShopCheck(ShopCheck shopCheck);
-    public Task DeleteShopCheck(Guid checkId, Guid shopId);
+    public IQueryable<ShopCheck> GetAllShopChecks(Guid shopId, CancellationToken cancellationToken);
+    public Task<ShopCheck?> GetShopCheckById(Guid checkId, Guid shopId, CancellationToken cancellationToken);
+    public void CreateShopCheck(ShopCheck shopCheck, CancellationToken cancellationToken);
+    public void UpdateShopCheck(ShopCheck shopCheck, CancellationToken cancellationToken);
+    public Task DeleteShopCheck(Guid checkId, Guid shopId, CancellationToken cancellationToken);
+    public Task AddProductsToCheck(SoldProduct soldProduct, CancellationToken cancellationToken);
+    public Task SoftDeleteShopCheck(Guid shopId, Guid checkId, CancellationToken cancellationToken);
 }

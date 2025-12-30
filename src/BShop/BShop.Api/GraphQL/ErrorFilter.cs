@@ -1,4 +1,4 @@
-using BShop.Domain.CustomExepions;
+using BShop.Domain.CustomExceptions;
 
 namespace BShop.GraphQL;
 

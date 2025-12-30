@@ -1,6 +1,6 @@
 namespace BShop.Domain.Model;
 
-public enum OrderStatusEnums
+public enum OrderStatus
 {
     Pending,
     Shipped,

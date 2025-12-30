@@ -4,9 +4,9 @@ namespace BShop.Domain.Interfaces.Repository;
 
 public interface IShopStorageRepository
 {
-    public Task<ShopStorage?> GetProductFromShop(Guid shopId, Guid productId);
-    public IQueryable<ShopStorage> GetShopAllProducts(Guid shopId);
-    public Task AddProductToShop(ShopStorage shopStorage);
-    public Task UpdateProductInShopStorage(ShopStorage shopStorage);
-    public Task DeleteProductFromStorage(Guid shopId, Guid productId);
+    public Task<ShopStorage?> GetProductFromShop(Guid shopId, Guid productId, CancellationToken cancellationToken);
+    public IQueryable<ShopStorage> GetShopAllProducts(Guid shopId, CancellationToken cancellationToken);
+    public void AddProductToShop(ShopStorage shopStorage, CancellationToken cancellationToken);
+    public void UpdateProductInShopStorage(ShopStorage shopStorage, CancellationToken cancellationToken);
+    public Task DeleteProductFromStorage(Guid shopId, Guid productId, CancellationToken cancellationToken);
 }
