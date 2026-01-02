@@ -8,4 +8,5 @@ public interface IWorkerRepository
     public Task CreateWorker(Worker worker, CancellationToken cancellationToken);
     public Task UpdateWorker(Worker worker, CancellationToken cancellationToken);
     public Task DeleteWorker(Guid id, CancellationToken cancellationToken);
+    public IQueryable<Worker> GetAllWorkers(CancellationToken cancellationToken);
 }

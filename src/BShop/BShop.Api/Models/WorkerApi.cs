@@ -1,16 +1,15 @@
-namespace BShop.Domain.Model;
+namespace BShop.Models;
 
-public class Worker
+public class WorkerApi
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
     public string Login { get; set; }
-    public string Password { get; set; }
     public string Role { get; set; }
     public string PhoneNumber { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public bool IsDeleted { get; set; }
 
-    public virtual ICollection<Shop> ManagedShops { get; set; }
+    public virtual ICollection<ShopApi> ManagedShops { get; set; }
 }
