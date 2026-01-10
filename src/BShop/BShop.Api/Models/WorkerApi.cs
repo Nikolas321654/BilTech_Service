@@ -11,5 +11,5 @@ public class WorkerApi
     public DateTime UpdatedAt { get; set; }
     public bool IsDeleted { get; set; }
 
-    public virtual ICollection<ShopApi> ManagedShops { get; set; }
+    public virtual ICollection<ShopApi> ManagedShops { get; set; } = new List<ShopApi>();
 }

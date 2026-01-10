@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.JavaScript;
 using BShop.Domain.CustomExceptions;
 using BShop.Domain.Interfaces.Repository;
 using BShop.Domain.Interfaces.Service;
@@ -20,7 +21,8 @@ public class WorkerService(IWorkerRepository workerRepository) : IWorkerService
         return workerRepository.GetAllWorkers(cancellationToken);
     }
 
-    public async Task CreateWorkerAsync(string name, string login, string password, string phoneNumber, string role,
+    public async Task CreateWorkerAsync(string name, string login, string password, string role,
+        string phoneNumber,
         CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(name)) throw new BadRequestException("Name cannot be empty");
@@ -29,10 +31,8 @@ public class WorkerService(IWorkerRepository workerRepository) : IWorkerService
         if (string.IsNullOrWhiteSpace(phoneNumber)) throw new BadRequestException("Phone Number cannot be empty");
         if (string.IsNullOrWhiteSpace(role)) throw new BadRequestException("Role cannot be empty");
 
-        if (workerRepository.GetAllWorkers(cancellationToken).Any(x => x.Login == login))
-        {
-            throw new BadRequestException("Worker with this login already exists");
-        }
+        if (workerRepository.GetAllWorkers(cancellationToken).Any(w => w.Login.Equals(login)))
+            throw new BadRequestException("Login already exists");
 
         var worker = new Worker()
         {
@@ -40,6 +40,7 @@ public class WorkerService(IWorkerRepository workerRepository) : IWorkerService
             Name = name,
             Login = login,
             Password = password,
+            Role = role,
             PhoneNumber = phoneNumber,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,

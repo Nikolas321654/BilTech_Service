@@ -2,7 +2,7 @@ using BShop.Domain.CustomExceptions;
 
 namespace BShop.GraphQL;
 
-public abstract class ErrorFilter : IErrorFilter
+public class ErrorFilter : IErrorFilter
 {
     public IError OnError(IError error)
     {
@@ -25,7 +25,7 @@ public abstract class ErrorFilter : IErrorFilter
                     .WithCode("ALREADY_ADDED")
                     .SetExtension("statusCode", 409),
 
-            _ => error.WithMessage("An unexpected server error occurred.")
+            _ => error.WithMessage(error.Exception.Message)
                 .WithCode("INTERNAL_SERVER_ERROR")
         };
     }

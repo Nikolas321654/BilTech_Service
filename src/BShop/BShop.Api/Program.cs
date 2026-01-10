@@ -24,7 +24,7 @@ builder.Services.AddScoped<IWarehouseTransferRepository, WarehouseTransferReposi
 builder.Services.AddScoped<IShopStorageRepository, ShopStorageRepository>();
 builder.Services.AddScoped<IShopChecksRepository, ShopChecksRepository>();
 
-builder.Services.AddDbContext<ShopDbContext>(options =>
+builder.Services.AddPooledDbContextFactory<ShopDbContext>(options =>
 {
     options.UseNpgsql(configuration.GetConnectionString(nameof(ShopDbContext)));
 });
@@ -37,7 +37,6 @@ builder.Services.AddScoped<IWarehouseTransferService, WarehouseTransferService>(
 builder.Services.AddScoped<IShopSaleService, ShopSaleService>();
 
 builder.Services.AddScoped<BShop.Domain.Interfaces.IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IErrorFilter, ErrorFilter>();
 
 builder.Services.AddGraphQLServer()
     .AddErrorFilter<ErrorFilter>()
@@ -48,16 +47,48 @@ builder.Services.AddGraphQLServer()
     .AddTypeExtension<WarehouseTransferQuery>()
     .AddTypeExtension<WorkerQuery>()
     .AddMutationType(d => d.Name("Mutation"))
-    .AddTypeExtension<ProductMutation>()
+    // .AddTypeExtension<ProductMutation>()
     .AddTypeExtension<ShopMutation>()
     .AddTypeExtension<WorkerMutation>()
-    .AddTypeExtension<WarehouseTransferMutation>()
-    .AddTypeExtension<ShopStorageMutation>()
+    // .AddTypeExtension<WarehouseTransferMutation>()
+    // .AddTypeExtension<ShopStorageMutation>()
     .AddProjections()
     .AddFiltering()
     .AddSorting();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var contextFactory = services.GetRequiredService<IDbContextFactory<ShopDbContext>>();
+        using var context = contextFactory.CreateDbContext();
+        var pendingMigrations = context.Database.GetPendingMigrations().ToList();
+        
+        if (pendingMigrations.Any())
+        {
+            Console.WriteLine(
+                $"----> Found {pendingMigrations.Count} pending migrations: {string.Join(", ", pendingMigrations)}");
+            Console.WriteLine("----> Applying migrations...");
+            context.Database.Migrate();
+            Console.WriteLine("----> Database updated successfully!");
+        }
+        else
+        {
+            Console.WriteLine("----> No pending migrations found. Database is up to date.");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"----> Migration error: {ex.Message}");
+        if (ex.InnerException != null)
+        {
+            Console.WriteLine($"----> Inner exception: {ex.InnerException.Message}");
+        }
+    }
+}
 
 if (app.Environment.IsDevelopment())
 {

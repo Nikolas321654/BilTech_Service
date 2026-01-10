@@ -1,6 +1,4 @@
-﻿version: '3.8'
-
-services:
+﻿services:
   shop-db:
     image: postgres:17-alpine
     container_name: bshop-shop-db
