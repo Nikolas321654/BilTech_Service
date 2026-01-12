@@ -7,23 +7,30 @@ using HotChocolate.Data;
 namespace BShop.GraphQL.Queries;
 
 [ExtendObjectType(Name = "Query")]
-public class ProductQuery(IProductService _productService, IMapper _mapper)
+public class ProductQuery
 {
     [UsePaging]
     [UseProjection]
     [UseFiltering]
     [UseSorting]
-    public IQueryable<ProductApi> GetAllProducts(CancellationToken cancellationToken)
+    public IQueryable<ProductApi> GetAllProducts([Service] IProductService productService,
+        [Service] IMapper mapper,
+        CancellationToken cancellationToken)
     {
-        return _productService.GetAllProducts(cancellationToken).ProjectTo<ProductApi>(_mapper.ConfigurationProvider);
+        return productService
+            .GetAllProducts(cancellationToken)
+            .ProjectTo<ProductApi>(mapper.ConfigurationProvider);
     }
 
     [UseFirstOrDefault]
     [UseProjection]
-    public IQueryable<ProductApi> GetProductById(Guid id, CancellationToken cancellationToken)
+    public IQueryable<ProductApi> GetProductById([Service] IProductService productService,
+        [Service] IMapper mapper,
+        Guid id,
+        CancellationToken cancellationToken)
     {
-        return GetAllProducts(cancellationToken)
-            .Where(x => x.Id == id)
-            .ProjectTo<ProductApi>(_mapper.ConfigurationProvider);
+        return productService.GetAllProducts(cancellationToken)
+            .Where(p => p.Id == id)
+            .ProjectTo<ProductApi>(mapper.ConfigurationProvider);
     }
 }
