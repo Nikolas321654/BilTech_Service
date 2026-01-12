@@ -35,6 +35,7 @@ builder.Services.AddScoped<IWorkerService, WorkerService>();
 builder.Services.AddScoped<IShopStorageService, ShopStorageService>();
 builder.Services.AddScoped<IWarehouseTransferService, WarehouseTransferService>();
 builder.Services.AddScoped<IShopSaleService, ShopSaleService>();
+builder.Services.AddScoped<IProductTypeService, ProductTypeService>();
 
 builder.Services.AddScoped<BShop.Domain.Interfaces.IUnitOfWork, UnitOfWork>();
 
@@ -46,10 +47,12 @@ builder.Services.AddGraphQLServer()
     .AddTypeExtension<ShopQuery>()
     .AddTypeExtension<WarehouseTransferQuery>()
     .AddTypeExtension<WorkerQuery>()
+    .AddTypeExtension<ProductTypeQuery>()
     .AddMutationType(d => d.Name("Mutation"))
-    // .AddTypeExtension<ProductMutation>()
+    .AddTypeExtension<ProductMutation>()
     .AddTypeExtension<ShopMutation>()
     .AddTypeExtension<WorkerMutation>()
+    .AddTypeExtension<ProductTypeMutation>()
     // .AddTypeExtension<WarehouseTransferMutation>()
     // .AddTypeExtension<ShopStorageMutation>()
     .AddProjections()
@@ -66,7 +69,7 @@ using (var scope = app.Services.CreateScope())
         var contextFactory = services.GetRequiredService<IDbContextFactory<ShopDbContext>>();
         using var context = contextFactory.CreateDbContext();
         var pendingMigrations = context.Database.GetPendingMigrations().ToList();
-        
+
         if (pendingMigrations.Any())
         {
             Console.WriteLine(

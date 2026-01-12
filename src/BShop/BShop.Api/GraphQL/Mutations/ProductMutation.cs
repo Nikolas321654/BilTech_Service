@@ -31,6 +31,4 @@ public class ProductMutation
         await productService.UpdateProduct(price, productId, cancellationToken);
         return true;
     }
-
-
 }
