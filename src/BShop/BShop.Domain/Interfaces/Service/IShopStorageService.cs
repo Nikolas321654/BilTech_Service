@@ -2,7 +2,7 @@ using BShop.Domain.Model;
 
 namespace BShop.Domain.Interfaces.Service;
 
-public interface IStorageService
+public interface IShopStorageService
 {
     public Task<ShopStorage?> GetProductFromShop(Guid shopId, Guid productId, CancellationToken cancellationToken);
 

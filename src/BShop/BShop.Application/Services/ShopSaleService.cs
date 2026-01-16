@@ -10,7 +10,7 @@ public class ShopSaleService(
     IShopChecksRepository shopChecksRepository,
     IShopStorageRepository shopStorageRepository,
     IUnitOfWork unitOfWork,
-    IStorageService storageService
+    IShopStorageService shopStorageService
 ) : IShopSaleService
 {
     public async Task<ShopCheck?> GetShopCheck(Guid shopId, Guid checkId, CancellationToken cancellationToken)
@@ -29,7 +29,7 @@ public class ShopSaleService(
             : shopChecksRepository.GetAllShopChecks(shopId, cancellationToken);
     }
 
-    public async Task CreateShopCheck(Guid shopId, CancellationToken cancellationToken)
+    public async Task<ShopCheck> CreateShopCheck(Guid shopId, CancellationToken cancellationToken)
     {
         if (shopId == Guid.Empty) throw new BadRequestException("Shop Id cannot be empty");
 
@@ -45,17 +45,19 @@ public class ShopSaleService(
 
         shopChecksRepository.CreateShopCheck(shopCheck, cancellationToken);
         await unitOfWork.SaveChangesAsync();
+
+        return await shopChecksRepository.GetShopCheckById(shopCheck.Id, shopCheck.ShopId, cancellationToken) ??
+               throw new NotFoundException("Shop check creation failed");
     }
 
-    public async Task UpdateShopCheck(Guid shopId, Guid checkId, decimal totalPrice,
+    public async Task UpdateShopCheck(Guid shopId, Guid checkId, int productsCount,
         CancellationToken cancellationToken)
     {
-        var shopCheck = await GetShopCheck(shopId, checkId, cancellationToken);
+        var shopSale = await shopChecksRepository.GetSoldProductFromCheck(checkId, shopId, cancellationToken);
+        if (shopSale == null) throw new NotFoundException($"Shop check with {checkId} id, not found");
 
-        shopCheck!.TotalPrice = totalPrice;
-        shopCheck.UpdatedAt = DateTime.UtcNow;
+        shopSale.ProductCount = productsCount;
 
-        shopChecksRepository.UpdateShopCheck(shopCheck, cancellationToken);
         await unitOfWork.SaveChangesAsync();
     }
 
@@ -105,7 +107,7 @@ public class ShopSaleService(
             await shopChecksRepository.AddProductsToCheck(soldProduct, cancellationToken);
             shopChecksRepository.UpdateShopCheck(check, cancellationToken);
             shopStorageRepository.UpdateProductInShopStorage(product, cancellationToken);
-            await storageService.ToSellProduct(shopId, productId, quantity, cancellationToken);
+            await shopStorageService.ToSellProduct(shopId, productId, quantity, cancellationToken);
 
             await unitOfWork.SaveChangesAsync();
             await unitOfWork.CommitAsync();

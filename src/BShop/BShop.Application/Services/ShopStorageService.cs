@@ -6,7 +6,8 @@ using BShop.Domain.Model;
 
 namespace BShop.Application.Services;
 
-public class ShopStorageService(IShopStorageRepository shopStorageRepository, IUnitOfWork unitOfWork) : IStorageService
+public class ShopStorageService(IShopStorageRepository shopStorageRepository, IUnitOfWork unitOfWork)
+    : IShopStorageService
 {
     public async Task<ShopStorage?> GetProductFromShop(Guid shopId, Guid productId, CancellationToken cancellationToken)
     {
@@ -57,7 +58,7 @@ public class ShopStorageService(IShopStorageRepository shopStorageRepository, IU
     public async Task DeleteProductFromStorage(Guid shopId, Guid productId, CancellationToken cancellationToken)
     {
         await GetProductFromShop(shopId, productId, cancellationToken);
-        await shopStorageRepository.DeleteProductFromStorage(shopId, productId, cancellationToken);
+        shopStorageRepository.DeleteProductFromStorage(shopId, productId, cancellationToken);
         await unitOfWork.SaveChangesAsync();
     }
 
