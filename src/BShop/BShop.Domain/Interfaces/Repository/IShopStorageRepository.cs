@@ -8,5 +8,5 @@ public interface IShopStorageRepository
     public IQueryable<ShopStorage> GetShopAllProducts(Guid shopId, CancellationToken cancellationToken);
     public void AddProductToShop(ShopStorage shopStorage, CancellationToken cancellationToken);
     public void UpdateProductInShopStorage(ShopStorage shopStorage, CancellationToken cancellationToken);
-    public Task DeleteProductFromStorage(Guid shopId, Guid productId, CancellationToken cancellationToken);
+    public void DeleteProductFromStorage(Guid shopId, Guid productId, CancellationToken cancellationToken);
 }

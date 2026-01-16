@@ -1,3 +1,4 @@
+using System.Formats.Asn1;
 using BShop.Domain.Interfaces.Repository;
 using BShop.Domain.Model;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ public class ShopChecksRepository(ShopDbContext context) : IShopChecksRepository
     public IQueryable<ShopCheck> GetAllShopChecks(Guid shopId, CancellationToken cancellationToken)
     {
         return context.ShopSales
+            .Include(x => x.Shop)
             .Where(x => x.ShopId == shopId && x.IsDeleted == false)
             .AsNoTracking();
     }
@@ -16,6 +18,7 @@ public class ShopChecksRepository(ShopDbContext context) : IShopChecksRepository
     public async Task<ShopCheck?> GetShopCheckById(Guid checkId, Guid shopId, CancellationToken cancellationToken)
     {
         return await context.ShopSales
+            .Include(x => x.Shop)
             .FirstOrDefaultAsync(x => x.Id == checkId && x.ShopId == shopId, cancellationToken);
     }
 
@@ -41,12 +44,26 @@ public class ShopChecksRepository(ShopDbContext context) : IShopChecksRepository
         if (check != null)
         {
             check.IsDeleted = true;
-            UpdateShopCheck(check, cancellationToken);
+            context.ShopSales.Update(check);
         }
     }
 
     public async Task AddProductsToCheck(SoldProduct soldProduct, CancellationToken cancellationToken)
     {
         await context.SoldProducts.AddAsync(soldProduct, cancellationToken);
+    }
+
+    public async Task<SoldProduct?> GetSoldProductFromCheck(Guid checkId, Guid productId,
+        CancellationToken cancellationToken)
+    {
+        return await context.SoldProducts
+            .Include(x => x.Product)
+            .FirstOrDefaultAsync(x => x.ProductId == productId && x.OrderId == checkId, cancellationToken);
+    }
+
+    public async Task UpdateSoldProduct(SoldProduct soldProduct, CancellationToken cancellationToken)
+    {
+        context.SoldProducts.Update(soldProduct);
+        await context.SaveChangesAsync(cancellationToken);
     }
 }

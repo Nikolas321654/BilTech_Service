@@ -29,6 +29,9 @@ builder.Services.AddPooledDbContextFactory<ShopDbContext>(options =>
     options.UseNpgsql(configuration.GetConnectionString(nameof(ShopDbContext)));
 });
 
+builder.Services.AddScoped(sp =>
+    sp.GetRequiredService<IDbContextFactory<ShopDbContext>>().CreateDbContext());
+
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IShopService, ShopService>();
 builder.Services.AddScoped<IWorkerService, WorkerService>();
@@ -48,13 +51,14 @@ builder.Services.AddGraphQLServer()
     .AddTypeExtension<WarehouseTransferQuery>()
     .AddTypeExtension<WorkerQuery>()
     .AddTypeExtension<ProductTypeQuery>()
+    .AddTypeExtension<ShopStorageQuery>()
     .AddMutationType(d => d.Name("Mutation"))
     .AddTypeExtension<ProductMutation>()
     .AddTypeExtension<ShopMutation>()
     .AddTypeExtension<WorkerMutation>()
     .AddTypeExtension<ProductTypeMutation>()
     // .AddTypeExtension<WarehouseTransferMutation>()
-    // .AddTypeExtension<ShopStorageMutation>()
+    .AddTypeExtension<ShopStorageMutation>()
     .AddProjections()
     .AddFiltering()
     .AddSorting();

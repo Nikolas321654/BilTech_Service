@@ -4,7 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BShop.Infrastructure.Repositories;
 
-public class WarehouseTransferRepository(ShopDbContext context) : IWarehouseTransferRepository
+public class WarehouseTransferRepository(ShopDbContext context)
+    : IWarehouseTransferRepository
 {
     public IQueryable<WarehouseTransferRequest> GetAllWarehouseOrders(Guid shopId, CancellationToken cancellationToken)
     {
@@ -13,18 +14,21 @@ public class WarehouseTransferRepository(ShopDbContext context) : IWarehouseTran
             .AsNoTracking();
     }
 
-    public async Task<WarehouseTransferRequest?> GetWarehouseOrderById(Guid shopId, Guid orderId, CancellationToken cancellationToken)
+    public async Task<WarehouseTransferRequest?> GetWarehouseOrderById(Guid shopId, Guid orderId,
+        CancellationToken cancellationToken)
     {
         return await context.WarehouseTransferRequests
             .FirstOrDefaultAsync(x => x.Id == orderId && x.ShopId == shopId, cancellationToken);
     }
 
-    public async Task CreateWarehouseOrder(WarehouseTransferRequest warehouseTransferRequest, CancellationToken cancellationToken)
+    public async Task CreateWarehouseOrder(WarehouseTransferRequest warehouseTransferRequest,
+        CancellationToken cancellationToken)
     {
         await context.WarehouseTransferRequests.AddAsync(warehouseTransferRequest, cancellationToken);
     }
 
-    public void UpdateWarehouseOrder(WarehouseTransferRequest warehouseTransferRequest, CancellationToken cancellationToken)
+    public void UpdateWarehouseOrder(WarehouseTransferRequest warehouseTransferRequest,
+        CancellationToken cancellationToken)
     {
         context.WarehouseTransferRequests.Update(warehouseTransferRequest);
     }
@@ -40,7 +44,8 @@ public class WarehouseTransferRepository(ShopDbContext context) : IWarehouseTran
         await context.WarehouseOrders.AddAsync(order, cancellationToken);
     }
 
-    public async Task<WarehouseOrder?> GetWarehouseOrderProduct(Guid orderId, Guid productId, CancellationToken cancellationToken)
+    public async Task<WarehouseOrder?> GetWarehouseOrderProduct(Guid orderId, Guid productId,
+        CancellationToken cancellationToken)
     {
         var order = await context.WarehouseOrders.FirstOrDefaultAsync(x =>
             x.OrderId == orderId && x.ProductId == productId, cancellationToken);
@@ -48,7 +53,8 @@ public class WarehouseTransferRepository(ShopDbContext context) : IWarehouseTran
         return order;
     }
 
-    public async Task UpdateWarehouseOrderProduct(Guid productId, Guid orderId, int quantity, CancellationToken cancellationToken)
+    public async Task UpdateWarehouseOrderProduct(Guid productId, Guid orderId, int quantity,
+        CancellationToken cancellationToken)
     {
         await context.WarehouseOrders
             .Where(x => x.OrderId == orderId && x.ProductId == productId)
