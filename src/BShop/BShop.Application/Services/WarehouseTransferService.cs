@@ -28,7 +28,6 @@ public class WarehouseTransferService(IWarehouseTransferRepository warehouseRepo
 
     public async Task CreateWarehouseOrder(Guid shopId, Guid warehouseId, CancellationToken cancellationToken)
     {
-        if (warehouseId == Guid.Empty) throw new BadRequestException("Warehouse Id cannot be empty");
         if (shopId == Guid.Empty) throw new BadRequestException("Shop Id cannot be empty");
 
         var newOrder = new WarehouseTransferRequest()

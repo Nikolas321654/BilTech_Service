@@ -10,6 +10,8 @@ public class WarehouseTransferRepository(ShopDbContext context)
     public IQueryable<WarehouseTransferRequest> GetAllWarehouseOrders(Guid shopId, CancellationToken cancellationToken)
     {
         return context.WarehouseTransferRequests
+            .Include(x => x.Shop)
+            .Include(x => x.WarehouseOrders)
             .Where(x => x.ShopId == shopId && x.IsDeleted == false)
             .AsNoTracking();
     }
@@ -18,6 +20,8 @@ public class WarehouseTransferRepository(ShopDbContext context)
         CancellationToken cancellationToken)
     {
         return await context.WarehouseTransferRequests
+            .Include(x => x.Shop)
+            .Include(x => x.WarehouseOrders)
             .FirstOrDefaultAsync(x => x.Id == orderId && x.ShopId == shopId, cancellationToken);
     }
 
