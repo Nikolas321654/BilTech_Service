@@ -14,7 +14,7 @@ public class WorkerMutation
         [Service] IWorkerService workerService,
         CancellationToken cancellationToken)
     {
-        await workerService.CreateWorkerAsync(name, login, password, role, phoneNumber, cancellationToken);
+        await workerService.RegisterWorker(name, login, password, role, phoneNumber, cancellationToken);
         return true;
     }
 
@@ -35,5 +35,11 @@ public class WorkerMutation
     {
         await workerService.UpdateWorkerAsync(workerId, phoneNumber, cancellationToken);
         return true;
+    }
+
+    public async Task<string> LoginWorker([Service] IWorkerService workerService, string login, string password,
+        CancellationToken cancellationToken)
+    {
+        return await workerService.LoginWorker(login, password, cancellationToken);
     }
 }

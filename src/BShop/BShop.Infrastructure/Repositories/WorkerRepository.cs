@@ -41,4 +41,9 @@ public class WorkerRepository(ShopDbContext context) : IWorkerRepository
     {
         return context.Workers.AsNoTracking().Where(x => !x.IsDeleted);
     }
+
+    public async Task<Worker?> GetWorkerByLogin(string login, CancellationToken cancellationToken)
+    {
+        return await context.Workers.AsNoTracking().FirstOrDefaultAsync(x => x.Login == login, cancellationToken);
+    }
 }

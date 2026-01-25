@@ -1,3 +1,4 @@
+using System.Text;
 using BShop;
 using BShop.Application.Services;
 using BShop.Domain.Interfaces.Repository;
@@ -7,14 +8,21 @@ using BShop.GraphQL.Mutations;
 using BShop.GraphQL.Queries;
 using BShop.Infrastructure;
 using BShop.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
+var jwtSecretKey = configuration["JWT_SECRET_KEY"];
+if (string.IsNullOrEmpty(jwtSecretKey))
+    throw new Exception("JWT_SECRET_KEY is not configured in environment variables!");
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IShopRepository, ShopRepository>();
@@ -42,7 +50,24 @@ builder.Services.AddScoped<IProductTypeService, ProductTypeService>();
 
 builder.Services.AddScoped<BShop.Domain.Interfaces.IUnitOfWork, UnitOfWork>();
 
-builder.Services.AddGraphQLServer()
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey)),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
+builder.Services
+    .AddGraphQLServer()
+    .AddAuthorization()
     .AddErrorFilter<ErrorFilter>()
     .ModifyRequestOptions(opt => opt.IncludeExceptionDetails = builder.Environment.IsDevelopment())
     .AddQueryType(d => d.Name("Query"))
@@ -102,6 +127,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 Console.ForegroundColor = ConsoleColor.Green;
 Console.WriteLine("**** Shop API is running! ****");

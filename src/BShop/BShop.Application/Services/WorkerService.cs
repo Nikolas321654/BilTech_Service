@@ -1,12 +1,17 @@
 using System.Runtime.InteropServices.JavaScript;
+using BShop.Domain;
 using BShop.Domain.CustomExceptions;
+using BShop.Domain.Interfaces;
+using BShop.Domain.Interfaces.Auth;
 using BShop.Domain.Interfaces.Repository;
 using BShop.Domain.Interfaces.Service;
 using BShop.Domain.Model;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace BShop.Application.Services;
 
-public class WorkerService(IWorkerRepository workerRepository) : IWorkerService
+public class WorkerService(IWorkerRepository workerRepository, IPasswordHasher passwordHasher, IJwtProvider jwtProvider)
+    : IWorkerService
 {
     public async Task<Worker?> GetWorkerById(Guid id, CancellationToken cancellationToken)
     {
@@ -21,8 +26,7 @@ public class WorkerService(IWorkerRepository workerRepository) : IWorkerService
         return workerRepository.GetAllWorkers(cancellationToken);
     }
 
-    public async Task CreateWorkerAsync(string name, string login, string password, string role,
-        string phoneNumber,
+    public async Task RegisterWorker(string name, string login, string password, string role, string phoneNumber,
         CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(name)) throw new BadRequestException("Name cannot be empty");
@@ -34,13 +38,15 @@ public class WorkerService(IWorkerRepository workerRepository) : IWorkerService
         if (workerRepository.GetAllWorkers(cancellationToken).Any(w => w.Login.Equals(login)))
             throw new BadRequestException("Login already exists");
 
+        var hashPassword = passwordHasher.GeneratePasswordHash(password);
+
         var worker = new Worker()
         {
             Id = Guid.NewGuid(),
             Name = name,
             Login = login,
-            Password = password,
-            Role = role,
+            Password = hashPassword,
+            Role = nameof(WorkerRole.ShopWorker),
             PhoneNumber = phoneNumber,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
@@ -48,6 +54,20 @@ public class WorkerService(IWorkerRepository workerRepository) : IWorkerService
         };
 
         await workerRepository.CreateWorker(worker, cancellationToken);
+    }
+
+    public async Task<string> LoginWorker(string login, string password, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(login)) throw new BadRequestException("Login cannot be empty");
+        if (string.IsNullOrWhiteSpace(password)) throw new BadRequestException("Password cannot be empty");
+        var worker = await workerRepository.GetWorkerByLogin(login, cancellationToken);
+        if (worker is null) throw new BadRequestException("Login or password is incorrect");
+
+        var result = passwordHasher.VerifyPasswordHash(password, worker.Password);
+
+        return !result
+            ? throw new BadRequestException("Login or password is incorrect")
+            : jwtProvider.GenerateJwtToken(worker);
     }
 
     public async Task UpdateWorkerAsync(Guid workerId, string phoneNumber, CancellationToken cancellationToken)

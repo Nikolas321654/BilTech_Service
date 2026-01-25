@@ -7,13 +7,13 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["BShop.Api/BShop.Api.csproj", "BShop.Api/"]
-COPY ["BShop.Application/BShop.Application.csproj", "BShop.Application/"]
-COPY ["BShop.Domain/BShop.Domain.csproj", "BShop.Domain/"]
-COPY ["BShop.Infrastructure/BShop.Infrastructure.csproj", "BShop.Infrastructure/"]
-RUN dotnet restore "BShop.Api/BShop.Api.csproj"
+COPY ["BilTech_Shop/src/BShop/BShop.Api/BShop.Api.csproj", "BilTech_Shop/src/BShop/BShop.Api/"]
+COPY ["BilTech_Shop/src/BShop/BShop.Application/BShop.Application.csproj", "BilTech_Shop/src/BShop/BShop.Application/"]
+COPY ["BilTech_Shop/src/BShop/BShop.Domain/BShop.Domain.csproj", "BilTech_Shop/src/BShop/BShop.Domain/"]
+COPY ["BilTech_Shop/src/BShop/BShop.Infrastructure/BShop.Infrastructure.csproj", "BilTech_Shop/src/BShop/BShop.Infrastructure/"]
+RUN dotnet restore "BilTech_Shop/src/BShop/BShop.Api/BShop.Api.csproj"
 COPY . .
-WORKDIR "/src/BShop.Api"
+WORKDIR "/src/BilTech_Shop/src/BShop/BShop.Api"
 RUN dotnet build "./BShop.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
