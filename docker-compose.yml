@@ -1,0 +1,48 @@
+services:
+  gataway-api:
+    image: b_gateway-api
+    container_name: b_gateway
+    build:
+      context: .
+      dockerfile: Api_Gateway/src/BApi_Gateway/Dockerfile
+    ports:
+      - "8100:8080"
+    networks:
+      - backend-network
+    environment: 
+      - JWT_SECRET_KEY=BShp_Gtwy_Secr_Key_2026_BWAR_32_!
+
+  shop-api:
+    image: bshop-shop-api
+    container_name: bshop-api
+    build:
+      context: .
+      dockerfile: BilTech_Shop/src/BShop/BShop.Api/Dockerfile
+    environment:
+      - ConnectionStrings__ShopDbContext=Host=shop-db;Port=5432;Database=ShopDb;Username=postgres;Password=123456
+      - JWT_SECRET_KEY=BShp_Gtwy_Secr_Key_2026_BWAR_32_!
+    depends_on:
+      - shop-db
+    ports:
+      - "8000:8080"
+    networks:
+      - backend-network
+
+  shop-db:
+    image: postgres:17-alpine
+    container_name: bshop-shop-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: ShopDb
+    volumes:
+      - bshop_db-data:/var/lib/postgresql/data
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    driver: bridge
+
+volumes:
+  bshop_db-data:
