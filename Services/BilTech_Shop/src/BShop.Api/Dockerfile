@@ -7,13 +7,13 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["BilTech_Shop/src/BShop/BShop.Api/BShop.Api.csproj", "BilTech_Shop/src/BShop/BShop.Api/"]
-COPY ["BilTech_Shop/src/BShop/BShop.Application/BShop.Application.csproj", "BilTech_Shop/src/BShop/BShop.Application/"]
-COPY ["BilTech_Shop/src/BShop/BShop.Domain/BShop.Domain.csproj", "BilTech_Shop/src/BShop/BShop.Domain/"]
-COPY ["BilTech_Shop/src/BShop/BShop.Infrastructure/BShop.Infrastructure.csproj", "BilTech_Shop/src/BShop/BShop.Infrastructure/"]
-RUN dotnet restore "BilTech_Shop/src/BShop/BShop.Api/BShop.Api.csproj"
+COPY ["Services/BilTech_Shop/src/BShop.Api/BShop.Api.csproj", "Services/BilTech_Shop/src/BShop.Api/"]
+COPY ["Services/BilTech_Shop/src/BShop.Application/BShop.Application.csproj", "Services/BilTech_Shop/src/BShop.Application/"]
+COPY ["Services/BilTech_Shop/src/BShop.Domain/BShop.Domain.csproj", "Services/BilTech_Shop/src/BShop.Domain/"]
+COPY ["Services/BilTech_Shop/src/BShop.Infrastructure/BShop.Infrastructure.csproj", "Services/BilTech_Shop/src/BShop.Infrastructure/"]
+RUN dotnet restore "Services/BilTech_Shop/src/BShop.Api/BShop.Api.csproj"
 COPY . .
-WORKDIR "/src/BilTech_Shop/src/BShop/BShop.Api"
+WORKDIR "/src/Services/BilTech_Shop/src/BShop.Api"
 RUN dotnet build "./BShop.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish

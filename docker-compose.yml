@@ -4,7 +4,7 @@ services:
     container_name: b_gateway
     build:
       context: .
-      dockerfile: Api_Gateway/src/BApi_Gateway/Dockerfile
+      dockerfile: Api_Gateway/src/BApi_Gateway/BApi_Gateway/Dockerfile
     ports:
       - "8100:8080"
     networks:
@@ -17,7 +17,7 @@ services:
     container_name: bshop-api
     build:
       context: .
-      dockerfile: BilTech_Shop/src/BShop/BShop.Api/Dockerfile
+      dockerfile: Services/BilTech_Shop/src/BShop.Api/Dockerfile
     environment:
       - ConnectionStrings__ShopDbContext=Host=shop-db;Port=5432;Database=ShopDb;Username=postgres;Password=123456
       - JWT_SECRET_KEY=BShp_Gtwy_Secr_Key_2026_BWAR_32_!

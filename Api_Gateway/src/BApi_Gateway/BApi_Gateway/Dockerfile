@@ -8,10 +8,10 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-COPY ["Api_Gateway/src/BApi_Gateway/BApi_Gateway.csproj", "Api_Gateway/src/BApi_Gateway/"]
-RUN dotnet restore "Api_Gateway/src/BApi_Gateway/BApi_Gateway.csproj"
+COPY ["Api_Gateway/src/BApi_Gateway/BApi_Gateway/BApi_Gateway.csproj", "Api_Gateway/src/BApi_Gateway/BApi_Gateway/"]
+RUN dotnet restore "Api_Gateway/src/BApi_Gateway/BApi_Gateway/BApi_Gateway.csproj"
 COPY . .
-WORKDIR "/src/Api_Gateway/src/BApi_Gateway"
+WORKDIR "/src/Api_Gateway/src/BApi_Gateway/BApi_Gateway"
 RUN dotnet build "./BApi_Gateway.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
