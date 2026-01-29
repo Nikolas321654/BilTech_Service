@@ -6,4 +6,10 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\BUser.Api\BUser.Api.csproj" />
+      <ProjectReference Include="..\BUser.Domain\BUser.Domain.csproj" />
+      <ProjectReference Include="..\BUser.Infrastructure\BUser.Infrastructure.csproj" />
+    </ItemGroup>
+
 </Project>

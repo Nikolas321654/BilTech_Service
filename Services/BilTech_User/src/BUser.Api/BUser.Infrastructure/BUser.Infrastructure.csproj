@@ -6,4 +6,13 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Auth\" />
+      <Folder Include="Configurations\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BUser.Domain\BUser.Domain.csproj" />
+    </ItemGroup>
+
 </Project>
