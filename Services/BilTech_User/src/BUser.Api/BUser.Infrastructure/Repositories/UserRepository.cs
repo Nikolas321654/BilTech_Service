@@ -1,37 +1,47 @@
 using BUser.Domain.Interfaces;
 using BUser.Domain.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace BUser.Infrastructure.Repositories;
 
-public class UserRepository : IUserRepository
+public class UserRepository(DbUserContext context) : IUserRepository
 {
-    public Task<User> GetUserById(Guid id)
+    public async Task<UserEntity?> GetUserById(Guid id)
     {
-        throw new NotImplementedException();
+        return await context.Users.FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public Task<User> GetUserByLogin(string login)
+    public async Task<UserEntity?> GetUserByLogin(string login)
     {
-        throw new NotImplementedException();
+        return await context.Users.FirstOrDefaultAsync(x => x.Login == login);
     }
 
-    public Task<User> CreateUser(User user)
+    public Task CreateUser(UserEntity userEntity)
     {
-        throw new NotImplementedException();
+        context.Users.Add(userEntity);
+        return context.SaveChangesAsync();
     }
 
-    public Task<User> UpdateUser(User user)
+    public Task UpdateUser(UserEntity userEntity)
     {
-        throw new NotImplementedException();
+        context.Users.Update(userEntity);
+        return context.SaveChangesAsync();
     }
 
-    public Task DeleteUser(Guid id)
+    public async Task DeleteUser(Guid id)
     {
-        throw new NotImplementedException();
+        var user = await context.Users.FirstOrDefaultAsync(x => x.Id == id);
+        if (user != null)
+        {
+            context.Users.Remove(user);
+            await context.SaveChangesAsync();
+        }
     }
 
-    public Task<List<User>> GetAllUsers()
+    public IQueryable<UserEntity> GetAllUsers(Guid workPlaceId)
     {
-        throw new NotImplementedException();
+        return context.Users
+            .AsNoTracking()
+            .Where(x => x.WorkPlaceId == workPlaceId);
     }
 }
