@@ -1,4 +1,4 @@
-namespace BUser.Domain.Model;
+namespace BUser.Api.Models;
 
 public class User
 {
@@ -6,7 +6,7 @@ public class User
     public Guid WorkPlaceId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Login { get; set; } = string.Empty;
-    public string Password { get; set; } 
+    public string Password { get; set; }
     public Roles Role { get; set; }
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; }
