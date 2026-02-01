@@ -109,6 +109,13 @@ ipch/
 *.vsp
 *.vspx
 
+# Draw.io backup files
+*.drawio.bkp
+~$*.drawio.bkp
+
+# Office temporary files
+~$*.docx
+
 # TFS 2012 Local Workspace
 $tf/
 
