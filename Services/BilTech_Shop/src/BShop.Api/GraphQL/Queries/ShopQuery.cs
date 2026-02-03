@@ -2,15 +2,16 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BShop.Domain.Interfaces.Service;
 using BShop.Models;
+using HotChocolate.Authorization;
 using HotChocolate.Data;
 
 namespace BShop.GraphQL.Queries;
 
+[Authorize(Roles = ["ShopWorker", "Owner"])]
 [ExtendObjectType(Name = "Query")]
 public class ShopQuery
 {
-    
-
+    [Authorize(Roles = ["ShopWorker", "Owner"])]
     [UsePaging]
     [UseProjection]
     [UseFiltering]
@@ -25,6 +26,7 @@ public class ShopQuery
             .ProjectTo<ShopCheckApi>(mapper.ConfigurationProvider);
     }
 
+    [Authorize(Roles = ["ShopWorker", "Owner"])]
     [UseFirstOrDefault]
     [UseProjection]
     public IQueryable<ShopCheckApi> GetShopCheck([Service] IMapper mapper,
@@ -39,6 +41,7 @@ public class ShopQuery
             .ProjectTo<ShopCheckApi>(mapper.ConfigurationProvider);
     }
 
+    [Authorize(Roles = ["Owner"])]
     [UseFirstOrDefault]
     [UseProjection]
     public IQueryable<ShopApi> GetShopById([Service] IShopService shopService,
@@ -51,7 +54,7 @@ public class ShopQuery
             .ProjectTo<ShopApi>(mapper.ConfigurationProvider);
     }
 
-
+    [Authorize(Roles = ["Owner"])]
     [UsePaging]
     [UseProjection]
     [UseFiltering]
