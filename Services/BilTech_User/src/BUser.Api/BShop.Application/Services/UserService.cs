@@ -7,6 +7,7 @@ namespace BShop.Application.Services;
 
 public class UserService(IUserRepository userRepository, IJwtProvider jwtProvider) : IUserService
 {
+    private readonly PasswordHasher<UserEntity> _passwordHasher = new();
     public async Task<UserEntity?> GetUserById(Guid id, CancellationToken ct)
     {
         if (Guid.Empty == id) throw new ArgumentNullException($"Id cannot be empty, {id}");
@@ -35,7 +36,7 @@ public class UserService(IUserRepository userRepository, IJwtProvider jwtProvide
             CreatedAt = DateTime.UtcNow
         };
 
-        var hashedPassword = new PasswordHasher<UserEntity>().HashPassword(user, password);
+        var hashedPassword = _passwordHasher.HashPassword(user, password);
         user.Password = hashedPassword;
 
         return await userRepository.CreateUser(user, ct);
@@ -51,7 +52,7 @@ public class UserService(IUserRepository userRepository, IJwtProvider jwtProvide
         var user = await userRepository.GetUserById(userId, ct);
         if (user == null) throw new ArgumentNullException($"User not found, {userId}");
 
-        var hashedPassword = new PasswordHasher<UserEntity>().HashPassword(user, password);
+        var hashedPassword = _passwordHasher.HashPassword(user, password);
 
         user!.Login = login;
         user.Password = hashedPassword;

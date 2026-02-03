@@ -2,10 +2,12 @@ using BUser.Api.Models;
 using AutoMapper;
 using BUser.Domain.Interfaces;
 using HotChocolate;
+using HotChocolate.Authorization;
 using HotChocolate.Types;
 
 namespace BUser.Api.GraphQl.Mutations;
 
+[Authorize(Roles = ["Owner"])]
 [ExtendObjectType(Name = "Mutation")]
 public class UserMutation
 {

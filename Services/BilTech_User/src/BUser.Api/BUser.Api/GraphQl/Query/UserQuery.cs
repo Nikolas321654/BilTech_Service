@@ -2,12 +2,15 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BUser.Api.Models;
 using BUser.Domain.Interfaces;
+using HotChocolate.Authorization;
 
 namespace BUser.Api.GraphQl.Query;
 
+[Authorize]
 [ExtendObjectType(Name = "Query")]
 public class UserQuery
 {
+    [Authorize(Roles = ["Owner"])]
     [UsePaging]
     [UseProjection]
     [UseFiltering]
