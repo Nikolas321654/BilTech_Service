@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BShop.Infrastructure.Migrations
 {
     [DbContext(typeof(ShopDbContext))]
-    [Migration("20260108162805_initialBShop")]
+    [Migration("20260203190330_initialBShop")]
     partial class initialBShop
     {
         /// <inheritdoc />
@@ -83,9 +83,6 @@ namespace BShop.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("EmployeeId")
-                        .HasColumnType("uuid");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -98,8 +95,6 @@ namespace BShop.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EmployeeId");
 
                     b.ToTable("Shops", (string)null);
                 });
@@ -231,48 +226,6 @@ namespace BShop.Infrastructure.Migrations
                     b.ToTable("WarehouseTransferRequests");
                 });
 
-            modelBuilder.Entity("BShop.Domain.Model.Worker", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Login")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Login");
-
-                    b.ToTable("Workers", (string)null);
-                });
-
             modelBuilder.Entity("ProductProductType", b =>
                 {
                     b.Property<Guid>("ProductTypesId")
@@ -286,15 +239,6 @@ namespace BShop.Infrastructure.Migrations
                     b.HasIndex("ProductsId");
 
                     b.ToTable("ProductProductType");
-                });
-
-            modelBuilder.Entity("BShop.Domain.Model.Shop", b =>
-                {
-                    b.HasOne("BShop.Domain.Model.Worker", "Employee")
-                        .WithMany("ManagedShops")
-                        .HasForeignKey("EmployeeId");
-
-                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("BShop.Domain.Model.ShopCheck", b =>
@@ -408,11 +352,6 @@ namespace BShop.Infrastructure.Migrations
             modelBuilder.Entity("BShop.Domain.Model.WarehouseTransferRequest", b =>
                 {
                     b.Navigation("WarehouseOrders");
-                });
-
-            modelBuilder.Entity("BShop.Domain.Model.Worker", b =>
-                {
-                    b.Navigation("ManagedShops");
                 });
 #pragma warning restore 612, 618
         }

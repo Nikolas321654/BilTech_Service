@@ -15,11 +15,6 @@ public class ShopConfiguration : IEntityTypeConfiguration<Shop>
         builder.Property(x => x.PhoneNumber).IsRequired();
 
         builder
-            .HasOne(x => x.Employee)
-            .WithMany(x => x.ManagedShops)
-            .HasForeignKey(x => x.EmployeeId);
-
-        builder
             .HasMany(x => x.ShopSales)
             .WithOne(x => x.Shop)
             .HasForeignKey(x => x.ShopId);

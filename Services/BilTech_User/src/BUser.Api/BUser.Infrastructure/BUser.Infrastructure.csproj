@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Auth\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\BUser.Domain\BUser.Domain.csproj" />
     </ItemGroup>
 

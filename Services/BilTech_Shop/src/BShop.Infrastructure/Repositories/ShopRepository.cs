@@ -16,8 +16,7 @@ public class ShopRepository(ShopDbContext context) : IShopRepository
         context.Shops.Add(shop);
         await context.SaveChangesAsync(cancellationToken);
 
-        return await context.Shops.Include(x => x.Employee)
-            .FirstOrDefaultAsync(x => x.Id == shop.Id, cancellationToken);
+        return await context.Shops.FirstOrDefaultAsync(x => x.Id == shop.Id, cancellationToken);
     }
 
     public async Task<Shop> UpdateShop(Shop shop, CancellationToken cancellationToken)
@@ -38,6 +37,6 @@ public class ShopRepository(ShopDbContext context) : IShopRepository
 
     public IQueryable<Shop> GetAllShops(CancellationToken cancellationToken)
     {
-        return context.Shops.AsNoTracking().Where(x => !x.IsDeleted).Include(x => x.Employee);
+        return context.Shops.AsNoTracking().Where(x => !x.IsDeleted);
     }
 }

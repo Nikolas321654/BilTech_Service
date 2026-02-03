@@ -11,13 +11,12 @@ public class ShopMutation
 {
     public async Task<ShopApi> RegisterShop([Service] IShopService shopService,
         [Service] IMapper mapper,
-        Guid employeeId,
         string shopName,
         string shopAddress,
         string shopPhoneNumber,
         CancellationToken cancellationToken)
     {
-        var shop = await shopService.CreateShop(employeeId, shopName, shopAddress, shopPhoneNumber,
+        var shop = await shopService.CreateShop(shopName, shopAddress, shopPhoneNumber,
             cancellationToken);
 
         return mapper.Map<ShopApi>(shop);
@@ -40,16 +39,6 @@ public class ShopMutation
         CancellationToken cancellationToken)
     {
         await shopService.DeleteShop(shopId, cancellationToken);
-        return true;
-    }
-
-    public async Task<bool> AddEmployee([Service] IShopService shopService,
-        [Service] IMapper mapper,
-        Guid shopId,
-        Guid employeeId,
-        CancellationToken cancellationToken)
-    {
-        await shopService.AddEmployeeToShop(shopId, employeeId, cancellationToken);
         return true;
     }
 

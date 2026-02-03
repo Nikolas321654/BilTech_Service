@@ -14,12 +14,10 @@ public class ShopDbContext(DbContextOptions<ShopDbContext> options) : DbContext(
     public DbSet<WarehouseTransferRequest> WarehouseTransferRequests { get; set; }
     public DbSet<SoldProduct> SoldProducts { get; set; }
     public DbSet<WarehouseOrder> WarehouseOrders { get; set; }
-    public DbSet<Worker> Workers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new ShopConfiguration());
-        modelBuilder.ApplyConfiguration(new WorkerConfiguration());
         modelBuilder.ApplyConfiguration(new ProductConfiguration());
         modelBuilder.ApplyConfiguration(new ShopStorageConfiguration());
         modelBuilder.ApplyConfiguration(new ProductTypeConfiguration());

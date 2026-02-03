@@ -15,7 +15,11 @@ using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
-var jwtSecretKey = configuration["JWT_SECRET_KEY"];
+var jwtSecretKey = configuration["JWT_SECRET_KEY"]
+                   ?? (builder.Environment.IsDevelopment()
+                       ? "temporary_development_key_for_migrations_only_32_chars"
+                       : null);
+
 if (string.IsNullOrEmpty(jwtSecretKey))
     throw new Exception("JWT_SECRET_KEY is not configured in environment variables!");
 
@@ -26,7 +30,6 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IShopRepository, ShopRepository>();
-builder.Services.AddScoped<IWorkerRepository, WorkerRepository>();
 builder.Services.AddScoped<IProductTypeRepository, ProductTypeRepository>();
 builder.Services.AddScoped<IWarehouseTransferRepository, WarehouseTransferRepository>();
 builder.Services.AddScoped<IShopStorageRepository, ShopStorageRepository>();
@@ -42,7 +45,6 @@ builder.Services.AddScoped(sp =>
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IShopService, ShopService>();
-builder.Services.AddScoped<IWorkerService, WorkerService>();
 builder.Services.AddScoped<IShopStorageService, ShopStorageService>();
 builder.Services.AddScoped<IWarehouseTransferService, WarehouseTransferService>();
 builder.Services.AddScoped<IShopSaleService, ShopSaleService>();
@@ -74,13 +76,11 @@ builder.Services
     .AddTypeExtension<ProductQuery>()
     .AddTypeExtension<ShopQuery>()
     .AddTypeExtension<WarehouseTransferQuery>()
-    .AddTypeExtension<WorkerQuery>()
     .AddTypeExtension<ProductTypeQuery>()
     .AddTypeExtension<ShopStorageQuery>()
     .AddMutationType(d => d.Name("Mutation"))
     .AddTypeExtension<ProductMutation>()
     .AddTypeExtension<ShopMutation>()
-    .AddTypeExtension<WorkerMutation>()
     .AddTypeExtension<ProductTypeMutation>()
     .AddTypeExtension<WarehouseTransferMutation>()
     .AddTypeExtension<ShopStorageMutation>()

@@ -42,22 +42,18 @@ namespace BShop.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Workers",
+                name: "Shops",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    Login = table.Column<string>(type: "text", nullable: false),
-                    Password = table.Column<string>(type: "text", nullable: false),
-                    Role = table.Column<string>(type: "text", nullable: false),
+                    Address = table.Column<string>(type: "text", nullable: false),
                     PhoneNumber = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Workers", x => x.Id);
+                    table.PrimaryKey("PK_Shops", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -82,27 +78,6 @@ namespace BShop.Infrastructure.Migrations
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Shops",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    EmployeeId = table.Column<Guid>(type: "uuid", nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Address = table.Column<string>(type: "text", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Shops", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Shops_Workers_EmployeeId",
-                        column: x => x.EmployeeId,
-                        principalTable: "Workers",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -234,11 +209,6 @@ namespace BShop.Infrastructure.Migrations
                 column: "ProductsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Shops_EmployeeId",
-                table: "Shops",
-                column: "EmployeeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ShopSales_ShopId",
                 table: "ShopSales",
                 column: "ShopId");
@@ -272,11 +242,6 @@ namespace BShop.Infrastructure.Migrations
                 name: "IX_WarehouseTransferRequests_Status",
                 table: "WarehouseTransferRequests",
                 column: "Status");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Workers_Login",
-                table: "Workers",
-                column: "Login");
         }
 
         /// <inheritdoc />
@@ -308,9 +273,6 @@ namespace BShop.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Shops");
-
-            migrationBuilder.DropTable(
-                name: "Workers");
         }
     }
 }

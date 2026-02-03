@@ -20,7 +20,7 @@ public class ShopService(IShopRepository shopRepository) : IShopService
         return shopRepository.GetAllShops(cancellationToken);
     }
 
-    public async Task<Shop?> CreateShop(Guid employeeId, string name, string address, string phoneNumber,
+    public async Task<Shop?> CreateShop(string name, string address, string phoneNumber,
         CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(name) || string.IsNullOrEmpty(address) || string.IsNullOrEmpty(phoneNumber))
@@ -32,8 +32,7 @@ public class ShopService(IShopRepository shopRepository) : IShopService
             Name = name,
             Address = address,
             PhoneNumber = phoneNumber,
-            IsDeleted = false,
-            EmployeeId = employeeId
+            IsDeleted = false
         };
 
         return await shopRepository.CreateShop(shop, cancellationToken);
@@ -57,13 +56,5 @@ public class ShopService(IShopRepository shopRepository) : IShopService
     {
         await GetShopById(shopId, cancellationToken);
         await shopRepository.DeleteShop(shopId, cancellationToken);
-    }
-
-    public async Task AddEmployeeToShop(Guid shopId, Guid employeeId, CancellationToken cancellationToken)
-    {
-        var shop = await GetShopById(shopId, cancellationToken);
-
-        shop.EmployeeId = employeeId;
-        await shopRepository.UpdateShop(shop, cancellationToken);
     }
 }
