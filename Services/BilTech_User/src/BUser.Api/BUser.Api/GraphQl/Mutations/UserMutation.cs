@@ -1,9 +1,7 @@
 using BUser.Api.Models;
 using AutoMapper;
 using BUser.Domain.Interfaces;
-using HotChocolate;
 using HotChocolate.Authorization;
-using HotChocolate.Types;
 
 namespace BUser.Api.GraphQl.Mutations;
 
@@ -11,6 +9,7 @@ namespace BUser.Api.GraphQl.Mutations;
 [ExtendObjectType(Name = "Mutation")]
 public class UserMutation
 {
+    [Authorize(Roles = ["Owner"])]
     public async Task<User> AddUser([Service] IUserService userService,
         [Service] IMapper mapper,
         string name,
@@ -25,6 +24,20 @@ public class UserMutation
         return mapper.Map<User>(user);
     }
 
+    [AllowAnonymous]
+    public async Task<User> AddOwner([Service] IUserService userService,
+        [Service] IMapper mapper,
+        string name,
+        string login,
+        string password,
+        string phoneNumber,
+        CancellationToken ct)
+    {
+        var user = await userService.RegisterOwner(name, login, password, Domain.Roles.Owner, phoneNumber, ct);
+        return mapper.Map<User>(user);
+    }
+
+    [Authorize(Roles = ["Owner"])]
     public async Task<bool> DeleteUser([Service] IUserService userService,
         Guid userId,
         CancellationToken ct)
@@ -33,8 +46,9 @@ public class UserMutation
         return true;
     }
 
+    [Authorize(Roles = ["Owner"])]
     public async Task<bool> UpdateUser([Service] IUserService userService,
-        Guid userId, 
+        Guid userId,
         string login,
         string password,
         string phoneNumber,

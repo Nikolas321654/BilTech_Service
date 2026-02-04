@@ -13,6 +13,5 @@ public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
         builder.HasIndex(x => x.Login).IsUnique();
         builder.Property(x => x.Password).IsRequired();
         builder.Property(x => x.Role).IsRequired();
-        builder.Property(x => x.WorkPlaceId).IsRequired();
     }
 }

@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUser.Domain", "BUser.Domai
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUser.Infrastructure", "BUser.Infrastructure\BUser.Infrastructure.csproj", "{8FADFBF8-8F3E-474C-BD79-106615AE4F40}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BShop.Application", "BShop.Application\BShop.Application.csproj", "{1A167977-5EA2-4022-9A78-3E6F17DA38B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BUser.Application", "BUser.Application\BUser.Application.csproj", "{1A167977-5EA2-4022-9A78-3E6F17DA38B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

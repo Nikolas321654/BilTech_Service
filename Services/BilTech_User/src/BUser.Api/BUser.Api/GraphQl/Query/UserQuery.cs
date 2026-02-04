@@ -6,11 +6,10 @@ using HotChocolate.Authorization;
 
 namespace BUser.Api.GraphQl.Query;
 
-[Authorize]
+[Authorize(Roles = ["Owner"])]
 [ExtendObjectType(Name = "Query")]
 public class UserQuery
 {
-    [Authorize(Roles = ["Owner"])]
     [UsePaging]
     [UseProjection]
     [UseFiltering]

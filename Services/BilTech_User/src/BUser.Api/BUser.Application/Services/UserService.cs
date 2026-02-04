@@ -8,6 +8,7 @@ namespace BShop.Application.Services;
 public class UserService(IUserRepository userRepository, IJwtProvider jwtProvider) : IUserService
 {
     private readonly PasswordHasher<UserEntity> _passwordHasher = new();
+
     public async Task<UserEntity?> GetUserById(Guid id, CancellationToken ct)
     {
         if (Guid.Empty == id) throw new ArgumentNullException($"Id cannot be empty, {id}");
@@ -20,6 +21,12 @@ public class UserService(IUserRepository userRepository, IJwtProvider jwtProvide
     {
         if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
             throw new ArgumentNullException($"Error: Name {name}, Login {login} or Password cannot be null or empty");
+
+        if (role == Roles.Owner)
+            throw new InvalidOperationException("Cannot register a user with Owner role using this method");
+
+        if (workPlaceId == Guid.Empty)
+            throw new ArgumentException("WorkPlaceId is required for regular users", nameof(workPlaceId));
 
         var existingUser = await userRepository.GetUserByLogin(login, ct);
         if (existingUser != null) throw new InvalidOperationException("Login is already taken");
@@ -41,6 +48,37 @@ public class UserService(IUserRepository userRepository, IJwtProvider jwtProvide
 
         return await userRepository.CreateUser(user, ct);
     }
+
+    public async Task<UserEntity> RegisterOwner(string name, string login, string password, Roles role,
+        string phoneNumber, CancellationToken ct)
+    {
+        if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
+            throw new ArgumentNullException($"Error: Name {name}, Login {login} or Password cannot be null or empty");
+
+        if (role != Roles.Owner)
+            throw new InvalidOperationException("This method is only for registering Owners");
+
+        var existingUser = await userRepository.GetUserByLogin(login, ct);
+        if (existingUser != null) throw new InvalidOperationException("Login is already taken");
+
+        var user = new UserEntity
+        {
+            Id = Guid.NewGuid(),
+            Name = name,
+            Login = login,
+            Role = role,
+            WorkPlaceId = null,
+            PhoneNumber = phoneNumber,
+            IsActive = true,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        var hashedPassword = _passwordHasher.HashPassword(user, password);
+        user.Password = hashedPassword;
+
+        return await userRepository.CreateUser(user, ct);
+    }
+
 
     public async Task UpdateUser(Guid userId, string login, string password, string phoneNumber, CancellationToken ct)
     {

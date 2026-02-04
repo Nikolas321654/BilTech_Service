@@ -1,3 +1,4 @@
+using System.Collections;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -16,11 +17,17 @@ public class JwtProvider(IOptions<AuthSettings> authSettings) : IJwtProvider
             new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.Value.SecretKey)),
                 SecurityAlgorithms.HmacSha256Signature);
 
-        Claim[] claims =
-        [
-            new("userId", user.Id.ToString()),
-            new("role", user.Role.ToString())
-        ];
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Role, user.Role.ToString())
+        };
+
+        if (user.WorkPlaceId.HasValue)
+        {
+            claims.Add(new Claim("workPlaceId", user.WorkPlaceId.Value.ToString()));
+        }
+
         var jwtToken = new JwtSecurityToken(
             claims: claims,
             signingCredentials: signingCredentials,

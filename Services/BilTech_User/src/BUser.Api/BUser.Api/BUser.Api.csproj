@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BShop.Application\BShop.Application.csproj" />
+      <ProjectReference Include="..\BUser.Application\BUser.Application.csproj" />
       <ProjectReference Include="..\BUser.Infrastructure\BUser.Infrastructure.csproj" />
     </ItemGroup>
 

@@ -12,5 +12,9 @@ public interface IUserService
     public Task UpdateUser(Guid userId, string login, string password, string phoneNumber, CancellationToken ct);
     public Task DeleteUser(Guid id, CancellationToken ct);
     public IQueryable<UserEntity> GetAllUsers(Guid workPlaceId, CancellationToken ct);
+
+    public Task<UserEntity> RegisterOwner(string name, string login, string password, Roles role,
+        string phoneNumber, CancellationToken ct);
+
     public Task<string> Login(string login, string password, CancellationToken ct);
 }
