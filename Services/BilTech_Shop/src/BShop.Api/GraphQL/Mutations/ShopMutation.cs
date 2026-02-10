@@ -1,7 +1,6 @@
 using System.Data.Common;
 using System.Security.Claims;
 using AutoMapper;
-using BShop.Domain.Interfaces.Repository;
 using BShop.Domain.Interfaces.Service;
 using BShop.Models;
 using HotChocolate.Authorization;
@@ -14,12 +13,16 @@ public class ShopMutation
     [Authorize(Roles = ["Owner"])]
     public async Task<ShopApi> RegisterShop([Service] IShopService shopService,
         [Service] IMapper mapper,
+        [GlobalState("ClaimsPrincipal")] ClaimsPrincipal claimsPrincipal,
         string shopName,
         string shopAddress,
         string shopPhoneNumber,
         CancellationToken cancellationToken)
     {
-        var shop = await shopService.CreateShop(shopName, shopAddress, shopPhoneNumber,
+        var shop = await shopService.CreateShop(claimsPrincipal.GetUserId(),
+            shopName,
+            shopAddress,
+            shopPhoneNumber,
             cancellationToken);
 
         return mapper.Map<ShopApi>(shop);
@@ -28,22 +31,26 @@ public class ShopMutation
     [Authorize(Roles = ["Owner"])]
     public async Task<ShopApi> UpdateShop([Service] IShopService shopService,
         [Service] IMapper mapper,
+        [GlobalState("ClaimsPrincipal")] ClaimsPrincipal claimsPrincipal,
         Guid shopId,
+        string shopName,
         string shopAddress,
         string shopPhoneNumber,
         CancellationToken cancellationToken)
     {
-        var shop = await shopService.UpdateShop(shopId, shopAddress, shopPhoneNumber, cancellationToken);
+        var shop = await shopService.UpdateShop(shopId, claimsPrincipal.GetUserId(), shopName, shopAddress,
+            shopPhoneNumber,
+            cancellationToken);
         return mapper.Map<ShopApi>(shop);
     }
 
     [Authorize(Roles = ["Owner"])]
     public async Task<bool> DeleteShop([Service] IShopService shopService,
-        [Service] IMapper mapper,
+        [GlobalState("ClaimsPrincipal")] ClaimsPrincipal claimsPrincipal,
         Guid shopId,
         CancellationToken cancellationToken)
     {
-        await shopService.DeleteShop(shopId, cancellationToken);
+        await shopService.DeleteShop(shopId, claimsPrincipal.GetUserId(), cancellationToken);
         return true;
     }
 
@@ -53,10 +60,7 @@ public class ShopMutation
         [GlobalState("ClaimsPrincipal")] ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
-        var workPlaceIdClaim = claimsPrincipal.FindFirst("workPlaceId")?.Value;
-        if (!Guid.TryParse(workPlaceIdClaim, out var shopId)) throw new GraphQLException("Invalid shop id");
-
-        var check = await shopSaleService.CreateShopCheck(shopId, cancellationToken);
+        var check = await shopSaleService.CreateShopCheck(claimsPrincipal.GetWorkPlaceId(), cancellationToken);
         return mapper.Map<ShopCheckApi>(check);
     }
 
@@ -68,9 +72,12 @@ public class ShopMutation
         int quantity,
         CancellationToken cancellationToken)
     {
-        var workPlaceIdClaim = claimsPrincipal.FindFirst("workPlaceId")?.Value;
-        if (!Guid.TryParse(workPlaceIdClaim, out var shopId)) throw new GraphQLException("Invalid shop id");
-        await shopSaleService.AddProductsToCheck(shopId, productId, checkId, quantity, cancellationToken);
+        await shopSaleService.AddProductsToCheck(claimsPrincipal.GetWorkPlaceId(),
+            productId,
+            checkId,
+            quantity,
+            cancellationToken);
+
         return true;
     }
 
@@ -80,9 +87,7 @@ public class ShopMutation
         [GlobalState("ClaimsPrincipal")] ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
-        var workPlaceIdClaim = claimsPrincipal.FindFirst("workPlaceId")?.Value;
-        if (!Guid.TryParse(workPlaceIdClaim, out var shopId)) throw new GraphQLException("Invalid shop id");
-        await shopSaleService.DeleteShopCheck(checkId, shopId, cancellationToken);
+        await shopSaleService.DeleteShopCheck(checkId, claimsPrincipal.GetWorkPlaceId(), cancellationToken);
         return true;
     }
 }

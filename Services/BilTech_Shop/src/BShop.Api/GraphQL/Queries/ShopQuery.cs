@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BShop.Domain.Interfaces.Service;
@@ -46,10 +47,11 @@ public class ShopQuery
     [UseProjection]
     public IQueryable<ShopApi> GetShopById([Service] IShopService shopService,
         [Service] IMapper mapper,
+        [GlobalState("ClaimsPrincipal")] ClaimsPrincipal claimsPrincipal,
         Guid shopId,
         CancellationToken cancellationToken)
     {
-        return shopService.GetAllShops(cancellationToken)
+        return shopService.GetAllShops(claimsPrincipal.GetUserId(), cancellationToken)
             .Where(x => x.Id == shopId)
             .ProjectTo<ShopApi>(mapper.ConfigurationProvider);
     }
@@ -61,8 +63,10 @@ public class ShopQuery
     [UseSorting]
     public IQueryable<ShopApi> GetAllShops([Service] IShopService shopService,
         [Service] IMapper mapper,
+        [GlobalState("ClaimsPrincipal")] ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
     {
-        return shopService.GetAllShops(cancellationToken).ProjectTo<ShopApi>(mapper.ConfigurationProvider);
+        return shopService.GetAllShops(claimsPrincipal.GetUserId(), cancellationToken)
+            .ProjectTo<ShopApi>(mapper.ConfigurationProvider);
     }
 }
