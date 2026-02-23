@@ -1,7 +1,9 @@
 using BShop.Domain.Interfaces.Service;
+using HotChocolate.Authorization;
 
 namespace BShop.GraphQL.Mutations;
 
+[Authorize(Roles = ["ShopWorker", "Owner"])]
 [ExtendObjectType(Name = "Mutation")]
 public class ProductTypeMutation
 {

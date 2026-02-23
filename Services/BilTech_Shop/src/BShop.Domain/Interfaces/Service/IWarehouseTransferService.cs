@@ -9,9 +9,9 @@ public interface IWarehouseTransferService
     public Task<WarehouseTransferRequest?> GetWarehouseOrderById(Guid shopId, Guid orderId,
         CancellationToken cancellationToken);
 
-    public Task CreateWarehouseOrder(Guid shopId, Guid warehouseId, CancellationToken cancellationToken);
+    public Task CreateWarehouseOrder(Guid shopId, CancellationToken cancellationToken);
 
-    public Task UpdateWarehouseOrder(Guid shopId, Guid orderId, OrderStatus status, DateTime? deliveryDate,
+    public Task UpdateWarehouseOrder(Guid shopId, Guid orderId, DateTime? deliveryDate,
         CancellationToken cancellationToken);
 
     public Task DeleteWarehouseOrder(Guid shopId, Guid orderId, CancellationToken cancellationToken);

@@ -1,3 +1,4 @@
+using BShop.Application.Builders;
 using BShop.Domain.CustomExceptions;
 using BShop.Domain.Interfaces;
 using BShop.Domain.Interfaces.Repository;
@@ -20,42 +21,34 @@ public class WarehouseTransferService(IWarehouseTransferRepository warehouseRepo
         CancellationToken cancellationToken)
     {
         if (orderId == Guid.Empty) throw new BadRequestException("Order Id cannot be empty");
-        if (shopId == Guid.Empty) throw new BadRequestException("Shop Id cannot be empty");
 
         var order = await warehouseRepository.GetWarehouseOrderById(shopId, orderId, cancellationToken);
         return order ?? throw new NotFoundException($"Warehouse order with {orderId} id, not found");
     }
 
-    public async Task CreateWarehouseOrder(Guid shopId, Guid warehouseId, CancellationToken cancellationToken)
+    public async Task CreateWarehouseOrder(Guid shopId, CancellationToken cancellationToken)
     {
-        if (shopId == Guid.Empty) throw new BadRequestException("Shop Id cannot be empty");
-
-        var newOrder = new WarehouseTransferRequest()
-        {
-            Id = Guid.NewGuid(),
-            ShopId = shopId,
-            WarehouseId = warehouseId,
-            Status = nameof(OrderStatus.Pending),
-            DeliveredAt = null,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
-            IsDeleted = false
-        };
+        var newOrder = new WarehouseRequestBuilder()
+            .AddId()
+            .AddCreatedAt()
+            .AddDeliveredAt(null)
+            .AddShopId(shopId)
+            .AddAtIsDeleted()
+            .FinishBuild();
 
         await warehouseRepository.CreateWarehouseOrder(newOrder, cancellationToken);
         await unitOfWork.SaveChangesAsync();
     }
 
-    public async Task UpdateWarehouseOrder(Guid shopId, Guid orderId, OrderStatus status, DateTime? deliveryDate,
+    public async Task UpdateWarehouseOrder(Guid shopId, Guid orderId, DateTime? deliveryDate,
         CancellationToken cancellationToken)
     {
         if (orderId == Guid.Empty) throw new BadRequestException("Order Id cannot be empty");
 
         var order = await GetWarehouseOrderById(shopId, orderId, cancellationToken);
+        if (order == null) throw new NotFoundException($"Warehouse order with {orderId} id, not found");
 
-        order!.Status = status.ToString();
         order.DeliveredAt = deliveryDate;
-        order.UpdatedAt = DateTime.UtcNow;
 
         warehouseRepository.UpdateWarehouseOrder(order, cancellationToken);
         await unitOfWork.SaveChangesAsync();
@@ -77,10 +70,6 @@ public class WarehouseTransferService(IWarehouseTransferRepository warehouseRepo
         await unitOfWork.BeginTransactionAsync();
         try
         {
-            if (quantity <= 0) throw new BadRequestException("Quantity must be greater than 0");
-            if (orderId == Guid.Empty) throw new BadRequestException("Order Id cannot be empty");
-            if (productId == Guid.Empty) throw new BadRequestException("Product Id cannot be empty");
-
             var orderCheck = await warehouseRepository.GetWarehouseOrderById(shopId, orderId, cancellationToken);
             if (orderCheck == null) throw new NotFoundException($"Warehouse order with {orderId} id, not found");
 
@@ -88,25 +77,19 @@ public class WarehouseTransferService(IWarehouseTransferRepository warehouseRepo
 
             if (order == null)
             {
-                var newOrder = new WarehouseOrder()
-                {
-                    OrderId = orderId,
-                    ProductId = productId,
-                    ProductCount = quantity
-                };
+                var newOrder = new WarehouseTransferItemBuilder()
+                    .AddOrderId(orderId)
+                    .AddProductId(productId)
+                    .AddProductCount(quantity)
+                    .FinishBuild();
 
-                orderCheck.UpdatedAt = DateTime.UtcNow;
                 await warehouseRepository.AddProductToOrder(newOrder, cancellationToken);
             }
             else
             {
                 await warehouseRepository.UpdateWarehouseOrderProduct(productId, orderId, quantity, cancellationToken);
-                orderCheck.UpdatedAt = DateTime.UtcNow;
             }
 
-            await unitOfWork.SaveChangesAsync();
-
-            warehouseRepository.UpdateWarehouseOrder(orderCheck, cancellationToken);
             await unitOfWork.SaveChangesAsync();
             await unitOfWork.CommitAsync();
         }
@@ -117,4 +100,3 @@ public class WarehouseTransferService(IWarehouseTransferRepository warehouseRepo
         }
     }
 }
-// Write - off of goods from warehouse will be done when warehouse service will be ready

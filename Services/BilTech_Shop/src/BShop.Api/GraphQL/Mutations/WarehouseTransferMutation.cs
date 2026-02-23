@@ -1,15 +1,17 @@
 using BShop.Domain.Interfaces.Repository;
 using BShop.Domain.Interfaces.Service;
+using HotChocolate.Authorization;
 
 namespace BShop.GraphQL.Mutations;
 
+[Authorize(Roles = ["ShopWorker", "Owner"])]
 [ExtendObjectType(Name = "Mutation")]
 public class WarehouseTransferMutation
 {
     public async Task<bool> CreateWarehouseTransferRequest([Service] IWarehouseTransferService warehouseTransferService,
         Guid shopId, Guid warehouseId, CancellationToken cancellationToken)
     {
-        await warehouseTransferService.CreateWarehouseOrder(shopId, warehouseId, cancellationToken);
+        await warehouseTransferService.CreateWarehouseOrder(shopId, cancellationToken);
         return true;
     }
 

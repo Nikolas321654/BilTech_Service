@@ -2,10 +2,12 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BShop.Domain.Interfaces.Service;
 using BShop.Models;
+using HotChocolate.Authorization;
 using HotChocolate.Data;
 
 namespace BShop.GraphQL.Queries;
 
+[Authorize(Roles = ["ShopWorker", "Owner"])]
 [ExtendObjectType(Name = "Query")]
 public class WarehouseTransferQuery(IMapper mapper, IWarehouseTransferService warehouseTransferService)
 {
