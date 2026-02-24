@@ -1,5 +1,5 @@
 services:
-  gataway-api:
+  gateway-api:
     image: b_gateway-api
     container_name: b_gateway
     build:
@@ -9,9 +9,40 @@ services:
       - "8100:8080"
     networks:
       - backend-network
-    environment: 
+    environment:
       - JWT_SECRET_KEY=BShp_Gtwy_Secr_Key_2026_BWAR_32_!
 
+  # --- User service ---
+  user-api:
+    image: buser-api
+    container_name: buser-api
+    build:
+      context: .
+      dockerfile: Services/BilTech_User/src/BUser.Api/Dockerfile
+    environment:
+      - ConnectionStrings__UserDbContext=Host=user-db;Port=5432;Database=UserDb;Username=postgres;Password=123456
+      - JWT_SECRET_KEY=BShp_Gtwy_Secr_Key_2026_BWAR_32_!
+    depends_on:
+      - user-db
+    ports:
+      - "8001:8080"
+    networks:
+      - backend-network
+
+  # --- User database ---
+  user-db:
+    image: postgres:17-alpine
+    container_name: buser-user-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: UserDb
+    volumes:
+      - buser_db-data:/var/lib/postgresql/data
+    networks:
+      - backend-network
+
+  # --- Shop service ---
   shop-api:
     image: bshop-shop-api
     container_name: bshop-api
@@ -27,7 +58,8 @@ services:
       - "8000:8080"
     networks:
       - backend-network
-
+  
+  # --- Shop database ---
   shop-db:
     image: postgres:17-alpine
     container_name: bshop-shop-db
@@ -46,3 +78,4 @@ networks:
 
 volumes:
   bshop_db-data:
+  buser_db-data:
