@@ -3,7 +3,7 @@ using BUser.Domain.Model;
 using Microsoft.AspNetCore.Identity;
 using Roles = BUser.Domain.Roles;
 
-namespace BShop.Application.Services;
+namespace BUser.Application.Services;
 
 public class UserService(IUserRepository userRepository, IJwtProvider jwtProvider, IUserFabric userFabric)
     : IUserService
@@ -31,11 +31,12 @@ public class UserService(IUserRepository userRepository, IJwtProvider jwtProvide
     public async Task<UserEntity> RegisterOwner(string name, string login, string password, Roles role,
         string phoneNumber, CancellationToken ct)
     {
-        var user = userFabric.CreateOwner(name, login, password, role, phoneNumber);
+        var user = userFabric.CreateOwner(name, login, password, phoneNumber);
 
         var hashedPassword = _passwordHasher.HashPassword(user, password);
         user.Password = hashedPassword;
 
+        Console.WriteLine(user.Id);
         return await userRepository.CreateUser(user, ct);
     }
 

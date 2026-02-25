@@ -20,7 +20,7 @@ services:
       context: .
       dockerfile: Services/BilTech_User/src/BUser.Api/Dockerfile
     environment:
-      - ConnectionStrings__UserDbContext=Host=user-db;Port=5432;Database=UserDb;Username=postgres;Password=123456
+      - ConnectionStrings__DbUserContext=Host=user-db;Port=5432;Database=UserDb;Username=postgres;Password=123456
       - JWT_SECRET_KEY=BShp_Gtwy_Secr_Key_2026_BWAR_32_!
     depends_on:
       - user-db
@@ -37,6 +37,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 123456
       POSTGRES_DB: UserDb
+    ports:
+      - "5433:5432"
     volumes:
       - buser_db-data:/var/lib/postgresql/data
     networks:

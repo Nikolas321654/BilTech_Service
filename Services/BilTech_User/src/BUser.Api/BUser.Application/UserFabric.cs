@@ -2,11 +2,11 @@ using BUser.Domain;
 using BUser.Domain.Interfaces;
 using BUser.Domain.Model;
 
-namespace BShop.Application;
+namespace BUser.Application;
 
 public class UserFabric : IUserFabric
 {
-    public UserEntity CreateOwner(string name, string login, string password, Roles role, string phoneNumber)
+    public UserEntity CreateOwner(string name, string login, string password, string phoneNumber)
     {
         ValidateCommonFields(name, login, password, phoneNumber);
         return new UserEntity
@@ -14,7 +14,7 @@ public class UserFabric : IUserFabric
             Id = Guid.NewGuid(),
             Name = name,
             Login = login,
-            Role = role,
+            Role = Roles.Owner,
             WorkPlaceId = null,
             PhoneNumber = phoneNumber,
             IsActive = true,

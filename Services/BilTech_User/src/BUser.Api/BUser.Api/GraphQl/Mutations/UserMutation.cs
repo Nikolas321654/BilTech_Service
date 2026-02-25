@@ -5,12 +5,11 @@ using HotChocolate.Authorization;
 
 namespace BUser.Api.GraphQl.Mutations;
 
-[Authorize(Roles = ["Owner"])]
 [ExtendObjectType(Name = "Mutation")]
 public class UserMutation
 {
     [Authorize(Roles = ["Owner"])]
-    public async Task<User> AddUser([Service] IUserService userService,
+    public async Task<UserResponse> AddUser([Service] IUserService userService,
         [Service] IMapper mapper,
         string name,
         string login,
@@ -21,11 +20,11 @@ public class UserMutation
         CancellationToken ct)
     {
         var user = await userService.RegisterUser(name, login, password, role, workPlaceId, phoneNumber, ct);
-        return mapper.Map<User>(user);
+        return mapper.Map<UserResponse>(user);
     }
-
+    
     [AllowAnonymous]
-    public async Task<User> AddOwner([Service] IUserService userService,
+    public async Task<UserResponse> AddOwner([Service] IUserService userService,
         [Service] IMapper mapper,
         string name,
         string login,
@@ -34,7 +33,16 @@ public class UserMutation
         CancellationToken ct)
     {
         var user = await userService.RegisterOwner(name, login, password, Domain.Roles.Owner, phoneNumber, ct);
-        return mapper.Map<User>(user);
+        return mapper.Map<UserResponse>(user);
+    }
+
+    [AllowAnonymous]
+    public async Task<string> Login([Service] IUserService userService,
+        string login,
+        string password,
+        CancellationToken ct)
+    {
+        return await userService.Login(login, password, ct);
     }
 
     [Authorize(Roles = ["Owner"])]

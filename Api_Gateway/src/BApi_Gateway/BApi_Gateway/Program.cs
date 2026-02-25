@@ -21,17 +21,28 @@ builder.Services
         options.TokenValidationParameters = new TokenValidationParameters()
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes($"{builder.Configuration["JWT_SECRET_KEY"]}")),
+            IssuerSigningKey =
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes($"{builder.Configuration["JWT_SECRET_KEY"]}")),
             ValidateIssuer = false,
             ValidateAudience = false,
             ClockSkew = TimeSpan.Zero
         };
     });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("WarehouseWorkerOnly", policy =>
-            policy.RequireRole("WarehouseWorker", "Owner"));
+        policy.RequireRole("WarehouseWorker", "Owner"));
 
     options.AddPolicy("ShopWorkerOnly", policy =>
         policy.RequireRole("ShopWorker", "Owner"));
@@ -45,7 +56,8 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseAuthentication(); 
+app.UseCors("AllowAll");
+app.UseAuthentication();
 app.UseAuthorization();
 //app.UseHttpsRedirection();
 app.MapReverseProxy();
