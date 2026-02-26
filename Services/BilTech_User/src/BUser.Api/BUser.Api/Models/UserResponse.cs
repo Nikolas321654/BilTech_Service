@@ -9,4 +9,6 @@ public class UserResponse
     public Roles Role { get; set; }
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; }
+    public string? PhoneNumber { get; set; } = string.Empty;
+    public string? Token { get; set; }
 }

@@ -20,9 +20,11 @@ public class UserMutation
         CancellationToken ct)
     {
         var user = await userService.RegisterUser(name, login, password, role, workPlaceId, phoneNumber, ct);
-        return mapper.Map<UserResponse>(user);
+        var userResponse = mapper.Map<UserResponse>(user);
+        userResponse.Token = await userService.Login(login, password, ct);
+        return userResponse;
     }
-    
+
     [AllowAnonymous]
     public async Task<UserResponse> AddOwner([Service] IUserService userService,
         [Service] IMapper mapper,
@@ -33,18 +35,11 @@ public class UserMutation
         CancellationToken ct)
     {
         var user = await userService.RegisterOwner(name, login, password, Domain.Roles.Owner, phoneNumber, ct);
-        return mapper.Map<UserResponse>(user);
+        var userResponse = mapper.Map<UserResponse>(user);
+        userResponse.Token = await userService.Login(login, password, ct);
+        return userResponse;
     }
-
-    [AllowAnonymous]
-    public async Task<string> Login([Service] IUserService userService,
-        string login,
-        string password,
-        CancellationToken ct)
-    {
-        return await userService.Login(login, password, ct);
-    }
-
+    
     [Authorize(Roles = ["Owner"])]
     public async Task<bool> DeleteUser([Service] IUserService userService,
         Guid userId,

@@ -36,7 +36,6 @@ public class UserService(IUserRepository userRepository, IJwtProvider jwtProvide
         var hashedPassword = _passwordHasher.HashPassword(user, password);
         user.Password = hashedPassword;
 
-        Console.WriteLine(user.Id);
         return await userRepository.CreateUser(user, ct);
     }
 

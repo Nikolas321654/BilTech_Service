@@ -6,10 +6,10 @@ using HotChocolate.Authorization;
 
 namespace BUser.Api.GraphQl.Query;
 
-[Authorize(Roles = ["Owner"])]
 [ExtendObjectType(Name = "Query")]
 public class UserQuery
 {
+    [Authorize(Roles = ["Owner"])]
     [UsePaging]
     [UseProjection]
     [UseFiltering]
@@ -20,6 +20,7 @@ public class UserQuery
         return userService.GetAllUsers(workPlaceId, ct).ProjectTo<UserResponse>(mapper.ConfigurationProvider);
     }
 
+    [Authorize(Roles = ["Owner"])]
     [UseFirstOrDefault]
     [UseProjection]
     public async Task<UserResponse> GetUserById([Service] IUserService userService, [Service] IMapper mapper,
@@ -27,5 +28,14 @@ public class UserQuery
     {
         var user = await userService.GetUserById(userId, ct);
         return mapper.Map<UserResponse>(user);
+    }
+
+    [AllowAnonymous]
+    public async Task<string> Login([Service] IUserService userService,
+        string login,
+        string password,
+        CancellationToken ct)
+    {
+        return await userService.Login(login, password, ct);
     }
 }
