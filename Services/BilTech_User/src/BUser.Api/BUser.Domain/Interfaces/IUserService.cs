@@ -6,7 +6,7 @@ public interface IUserService
 {
     public Task<UserEntity?> GetUserById(Guid id, CancellationToken ct);
 
-    public Task<UserEntity> RegisterUser(string name, string login, string password, Roles role, Guid workPlaceId,
+    public Task<UserEntity> RegisterUser(string name, string login, string password, Guid workPlaceId,
         string phoneNumber, CancellationToken ct);
 
     public Task UpdateUser(Guid userId, string login, string password, string phoneNumber, CancellationToken ct);

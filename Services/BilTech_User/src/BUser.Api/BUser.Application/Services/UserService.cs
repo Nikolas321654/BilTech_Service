@@ -17,10 +17,10 @@ public class UserService(IUserRepository userRepository, IJwtProvider jwtProvide
         return await userRepository.GetUserById(id, ct) ?? throw new ArgumentNullException($"User not found, {id}");
     }
 
-    public async Task<UserEntity> RegisterUser(string name, string login, string password, Roles role, Guid workPlaceId,
+    public async Task<UserEntity> RegisterUser(string name, string login, string password, Guid workPlaceId,
         string phoneNumber, CancellationToken ct)
     {
-        var user = userFabric.CreateUser(name, login, password, role, workPlaceId, phoneNumber);
+        var user = userFabric.CreateUser(name, login, password, Roles.ShopEmployee, workPlaceId, phoneNumber);
 
         var hashedPassword = _passwordHasher.HashPassword(user, password);
         user.Password = hashedPassword;

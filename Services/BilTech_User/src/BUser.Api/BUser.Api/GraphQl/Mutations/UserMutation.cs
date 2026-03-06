@@ -19,7 +19,7 @@ public class UserMutation
         Guid workPlaceId,
         CancellationToken ct)
     {
-        var user = await userService.RegisterUser(name, login, password, role, workPlaceId, phoneNumber, ct);
+        var user = await userService.RegisterUser(name, login, password, workPlaceId, phoneNumber, ct);
         var userResponse = mapper.Map<UserResponse>(user);
         userResponse.Token = await userService.Login(login, password, ct);
         return userResponse;
