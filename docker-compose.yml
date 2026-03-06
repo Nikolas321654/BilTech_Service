@@ -1,4 +1,26 @@
 services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - backend-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - backend-network
+  
   gateway-api:
     image: b_gateway-api
     container_name: b_gateway
@@ -55,6 +77,7 @@ services:
       - ConnectionStrings__ShopDbContext=Host=shop-db;Port=5432;Database=ShopDb;Username=postgres;Password=123456
       - JWT_SECRET_KEY=BShp_Gtwy_Secr_Key_2026_BWAR_32_!
     depends_on:
+      - kafka
       - shop-db
     ports:
       - "8000:8080"
@@ -73,6 +96,35 @@ services:
       - bshop_db-data:/var/lib/postgresql/data
     networks:
       - backend-network
+  
+  # --- Warehouse Database ---
+  warehouse-db:
+    image: postgres:latest
+    container_name: warehouse_db
+    environment:
+      POSTGRES_DB: WarehouseDb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    networks:
+      - backend-network
+
+  # --- Warehouse Service ---
+  warehouse-api:
+    image: warehouse-api
+    container_name: warehouse_api
+    build:
+      context: .
+      dockerfile: Services/BilTech_Warehouse/src/Warehouse.Api/Warehouse.Api/Dockerfile
+    depends_on:
+      - warehouse-db
+      - kafka
+    networks:
+      - backend-network
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=warehouse-db;Database=WarehouseDb;Username=postgres;Password=postgres
+      - JWT_SECRET_KEY=BShp_Gtwy_Secr_Key_2026_BWAR_32_!
 
 networks:
   backend-network:
