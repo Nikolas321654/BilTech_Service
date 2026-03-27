@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		compose.yaml = compose.yaml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messaging.Kafka", "Messaging.Kafka\Messaging.Kafka.csproj", "{0250F79C-47FB-442B-BF8A-7F46311EE688}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,5 +37,9 @@ Global
 		{EE5E9112-6AF7-46EC-95A7-8C69260EE69E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE5E9112-6AF7-46EC-95A7-8C69260EE69E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE5E9112-6AF7-46EC-95A7-8C69260EE69E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0250F79C-47FB-442B-BF8A-7F46311EE688}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0250F79C-47FB-442B-BF8A-7F46311EE688}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0250F79C-47FB-442B-BF8A-7F46311EE688}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0250F79C-47FB-442B-BF8A-7F46311EE688}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
