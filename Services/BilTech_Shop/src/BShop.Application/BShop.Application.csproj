@@ -7,12 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="16.1.1" />
       <PackageReference Include="HotChocolate" Version="15.1.11" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\BShop.Domain\BShop.Domain.csproj" />
       <ProjectReference Include="..\BShop.Infrastructure\BShop.Infrastructure.csproj" />
+      <ProjectReference Include="..\Messaging.Kafka\Messaging.Kafka.csproj" />
     </ItemGroup>
 
 </Project>

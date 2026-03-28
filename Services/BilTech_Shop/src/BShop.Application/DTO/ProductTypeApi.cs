@@ -1,4 +1,4 @@
-namespace BShop.Models;
+namespace BShop.Application.Models;
 
 public class ProductTypeApi
 {
@@ -6,5 +6,5 @@ public class ProductTypeApi
     public string Type { get; set; }
     public bool IsDeleted { get; set; }
     
-    public virtual ICollection<ProductApi> Products { get; set; }
+    public ICollection<ProductApi> Products { get; set; }
 }

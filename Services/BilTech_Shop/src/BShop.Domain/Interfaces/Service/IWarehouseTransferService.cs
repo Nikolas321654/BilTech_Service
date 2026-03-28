@@ -18,4 +18,7 @@ public interface IWarehouseTransferService
 
     public Task AddProductToWarehouseOrder(Guid shopId, Guid orderId, Guid productId, int quantity,
         CancellationToken cancellationToken);
+
+    public Task SendWarehouseOrder(Guid shopId, Guid orderId,
+        CancellationToken cancellationToken);
 }

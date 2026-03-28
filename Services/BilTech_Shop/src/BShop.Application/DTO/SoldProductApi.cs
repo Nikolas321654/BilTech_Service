@@ -1,4 +1,4 @@
-namespace BShop.Models;
+namespace BShop.Application.Models;
 
 public class SoldProductApi
 {
@@ -7,6 +7,6 @@ public class SoldProductApi
     public int ProductCount { get; set; }
     public decimal TotalPrice { get; set; }
 
-    public virtual ProductApi Product { get; set; }
-    public virtual ShopCheckApi ShopCheck { get; set; }
+    public ProductApi Product { get; set; }
+    public ShopCheckApi ShopCheck { get; set; }
 }

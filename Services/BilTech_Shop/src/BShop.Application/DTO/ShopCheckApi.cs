@@ -1,4 +1,5 @@
-namespace BShop.Models;
+namespace BShop.Application.Models;
+
 
 public class ShopCheckApi
 {
@@ -9,6 +10,6 @@ public class ShopCheckApi
     public bool IsDeleted { get; set; }
     public decimal TotalPrice { get; set; }
 
-    public virtual ShopApi Shop { get; set; }
-    public virtual ICollection<SoldProductApi> SaledProducts { get; set; }
+    public ShopApi Shop { get; set; }
+    public ICollection<SoldProductApi> SaledProducts { get; set; }
 }

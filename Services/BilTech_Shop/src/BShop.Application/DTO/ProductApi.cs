@@ -1,4 +1,4 @@
-namespace BShop.Models;
+namespace BShop.Application.Models;
 
 public class ProductApi
 {
@@ -10,5 +10,5 @@ public class ProductApi
     public DateTime UpdatedAt { get; set; }
     public bool IsDeleted { get; set; }
 
-    public virtual ICollection<ProductTypeApi> ProductTypes { get; set; }
+    public ICollection<ProductTypeApi> ProductTypes { get; set; }
 }

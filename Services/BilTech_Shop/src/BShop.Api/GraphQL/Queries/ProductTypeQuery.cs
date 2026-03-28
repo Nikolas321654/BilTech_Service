@@ -1,7 +1,7 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using BShop.Application.Models;
 using BShop.Domain.Interfaces.Service;
-using BShop.Models;
 using HotChocolate.Authorization;
 using HotChocolate.Data;
 

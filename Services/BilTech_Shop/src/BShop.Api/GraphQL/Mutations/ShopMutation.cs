@@ -1,8 +1,8 @@
 using System.Data.Common;
 using System.Security.Claims;
 using AutoMapper;
+using BShop.Application.Models;
 using BShop.Domain.Interfaces.Service;
-using BShop.Models;
 using HotChocolate.Authorization;
 
 namespace BShop.GraphQL.Mutations;

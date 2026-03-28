@@ -30,4 +30,12 @@ public class WarehouseTransferMutation
         await warehouseTransferService.DeleteWarehouseOrder(shopId, orderId, cancellationToken);
         return true;
     }
+
+    public async Task<bool> SendWarehouseTransferRequest(
+        [Service] IWarehouseTransferService warehouseTransferService,
+        Guid shopId, Guid orderId, CancellationToken cancellationToken)
+    {
+        await warehouseTransferService.SendWarehouseOrder(shopId, orderId, cancellationToken);
+        return true;
+    }
 }

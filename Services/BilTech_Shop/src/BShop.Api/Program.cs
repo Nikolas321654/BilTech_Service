@@ -1,5 +1,6 @@
 using System.Text;
 using BShop;
+using BShop.Application.Models;
 using BShop.Application.Services;
 using BShop.Domain.Interfaces.Repository;
 using BShop.Domain.Interfaces.Service;
@@ -8,6 +9,7 @@ using BShop.GraphQL.Mutations;
 using BShop.GraphQL.Queries;
 using BShop.Infrastructure;
 using BShop.Infrastructure.Repositories;
+using Messaging.Kafka;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -34,6 +36,8 @@ builder.Services.AddScoped<IProductTypeRepository, ProductTypeRepository>();
 builder.Services.AddScoped<IWarehouseTransferRepository, WarehouseTransferRepository>();
 builder.Services.AddScoped<IShopStorageRepository, ShopStorageRepository>();
 builder.Services.AddScoped<IShopChecksRepository, ShopChecksRepository>();
+
+builder.Services.AddProducer<WarehouseTransferRequestApi>(builder.Configuration.GetSection("Kafka:WarehouseOrder"));
 
 builder.Services.AddPooledDbContextFactory<ShopDbContext>(options =>
 {
