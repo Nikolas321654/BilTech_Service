@@ -42,25 +42,4 @@ public class ProductController(IProductService productService) : ControllerBase
         await productService.DeleteProduct(id, cancellationToken);
         return NoContent();
     }
-
-    [HttpGet("types/{id:guid}")]
-    public async Task<IActionResult> GetProductTypeById(Guid id, CancellationToken cancellationToken)
-    {
-        var type = await productService.GetProductTypeById(id, cancellationToken);
-        return Ok(type);
-    }
-
-    [HttpGet("types")]
-    public IActionResult GetAllProductTypes(CancellationToken cancellationToken)
-    {
-        var types = productService.GetAllProductTypes(cancellationToken);
-        return Ok(types);
-    }
-
-    [HttpPost("types")]
-    public async Task<IActionResult> CreateProductType([FromBody] string typeName, CancellationToken cancellationToken)
-    {
-        var type = await productService.CreateProductType(typeName, cancellationToken);
-        return CreatedAtAction(nameof(GetProductTypeById), new { id = type.Id }, type);
-    }
 }
